@@ -79,4 +79,4 @@ theme: claudia
 deploy:
   type: git
   branch: master
-  repository: git@github.com:xuyoze/xuyoze.github.io.git
+  repository: https://github.com/xuyoze/xuyoze.github.io.git
