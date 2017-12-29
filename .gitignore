@@ -6,3 +6,7 @@ node_modules/
 public/
 .deploy*/
 .deploy_git/
+
+# Yu Writer
+yulib*/
+yulib*
