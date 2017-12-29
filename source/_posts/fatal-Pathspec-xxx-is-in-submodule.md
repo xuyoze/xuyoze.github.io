@@ -1,5 +1,5 @@
 ---
-title: Git 错误 fatal Pathspec 'xxx' is in submodule
+title: Git 错误 fatal Pathspec xxx is in submodule
 date: 2017-12-29 22:19:49
 tags: git
 ---
@@ -42,12 +42,16 @@ git add CocktailMakerModule/
 That seems to resolve the issue.
 
 **解决方法:**
-1. 执行命令从本地仓储删除现有文件夹
-```
+
+执行命令从本地仓储删除现有文件夹
+
+```shell
 git rm -rf --cached claudia/
 ```
-2.添加文件后重新添加到本地仓储
-```
+
+添加文件后重新添加到本地仓储
+
+```shell
 git add claudia/
 ```
 
