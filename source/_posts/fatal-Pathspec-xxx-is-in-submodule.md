@@ -9,7 +9,7 @@ tags: git
 
 而文件夹中无任何文件.
 
-![error](/image/Snipaste_2017-12-29_22-26-11.png)
+![error](/images/Snipaste_2017-12-29_22-26-11.png)
 
 更换机器后,拉取仓储,重新添加文件后试图将文件添加到git报错.
 
