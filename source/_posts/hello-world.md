@@ -1,38 +1,41 @@
 ---
-title: Hello Hexo
+title: 你好曹丹的世界
+date: 2017-12-29
+tags: [碎碎念]
 ---
-Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).
+2017年最有一个工作日了!!!
 
-## Quick Start
+午饭时间准备折腾下githubpage.网上找了些教程,想在我这WIN7的机器上安装个`jekyll`可是这玩意需要`ruby`运行环境....
 
-### Create a new post
+![rube](images/ruby-rube.jpg "post-cover")
 
-``` bash
-$ hexo new "My New Post"
-```
+作为一个码猴, 我的8G破车已经无法再来一个运行环境啦!!
+- Nodjs
+- .Net
+- Java
+- Python
+- Golang
+- ...
 
-More info: [Writing](https://hexo.io/docs/writing.html)
+嗯..., 我装这么多也只是玩票啊...
+哈哈,但是我真的不想在装一个`ruby`了...
 
-### Run server
+**使用 HEXO**
 
-``` bash
-$ hexo server
-```
+为啥用hexo??
 
-More info: [Server](https://hexo.io/docs/server.html)
+搜索引擎关键字匹配的, 其实我本来并不知道的..
 
-### Generate static files
+官网看了下还不错哦 [hexi](https://hexi.io) ,感谢这位台湾的小哥.
 
-``` bash
-$ hexo generate
-```
+另外找了一片[普及文章](https://www.jianshu.com/p/858ecf233db9), 照着一步步就搞定了.(*画瓢我还是可以的*)
 
-More info: [Generating](https://hexo.io/docs/generating.html)
+接下来就是选个模板啥的, 这些都可以按照`hexo`官方文档来做.
 
-### Deploy to remote sites
+然后我就码了这个小文...
 
-``` bash
-$ hexo deploy
-```
+我闪~
 
-More info: [Deployment](https://hexo.io/docs/deployment.html)
+**参考文章**
+- [官方文档](https://hexo.io/zh-cn/docs/)
+- [通过Hexo在Github上搭建博客教程](https://www.jianshu.com/p/858ecf233db9)
