@@ -2,13 +2,13 @@
 
 这里是个人写的一些笔记,借助于GithubPage发布到公网.
 
-[点这里呀]("http://xuyoze.github.io/index.html")
+[点这里呀](http://xuyoze.github.io/index.html)
 
 ### Hexo
 
 A fast, simple & powerful blog framework
 
-博客基于Hexo搭建,了解更多关于Hexo的使用方法,可以查看>> [hexo官网]("https://hexo.io/")
+博客基于Hexo搭建,了解更多关于Hexo的使用方法,可以查看>> [hexo官网](https://hexo.io/)
 
 ### Claudia Theme
 
