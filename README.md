@@ -1,37 +1,17 @@
-## Welcome to GitHub Pages
+## 个人BOLOG
 
-You can use the [editor on GitHub](https://github.com/xuyoze/xuyoze.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+这里是个人写的一些笔记,借助于GithubPage发布到公网.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+[点这里呀]("http://xuyoze.github.io/index.html")
 
-### Markdown
+### Hexo
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+A fast, simple & powerful blog framework
 
-```markdown
-Syntax highlighted code block
+博客基于Hexo搭建,了解更多关于Hexo的使用方法,可以查看>> [hexo官网]("https://hexo.io/")
 
-# Header 1
-## Header 2
-### Header 3
+### Claudia Theme
 
-- Bulleted
-- List
+当前的blog使用了Claudia主题, 你可以在这里查看具体内容 [Claudia](https://github.com/Haojen/hexo-theme-Claudia).
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/xuyoze/xuyoze.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+### Yu Writer
