@@ -48,7 +48,8 @@ disqus_url: https://haojen.disqus.com/embed.js
 favicon: /favicon.ico
 use_baidu_analytics: true
 baidu_analytics: d484c06aa1636ad18eeb208942d6f840
-google_analytics: false
+use_google_analytics: true
+google_analytics: UA-111753291-1
 #twitter:
 #google_plus:
 #fb_admins:

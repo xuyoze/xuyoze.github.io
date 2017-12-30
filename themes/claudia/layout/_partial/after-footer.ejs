@@ -2,7 +2,7 @@
 <script>
   var disqus_shortname = '<%= config.disqus_shortname %>';
   <% if (page.permalink){ %>
-  var disqus_url = '<%= page.permalink %>';
+    var disqus_url = '<%= page.permalink %>';
   <% } %>
   (function(){
     var dsq = document.createElement('script');
@@ -13,9 +13,6 @@
   })();
 </script>
 <% } %>
-
-<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>-->
-
 <% if (theme.fancybox){ %>
   <%- css('fancybox/jquery.fancybox') %>
   <%- js('fancybox/jquery.fancybox.pack') %>
