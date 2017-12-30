@@ -38,7 +38,7 @@ fancybox: true
 
 # 评论系统
 # 不要用别人的 uid, 自己去注册一个吧
-use_livere: true
+use_livere: false
 livere_uid: MTAyMC8zMjc3Ny85MzM4
 
 use_disqus: false

@@ -5,10 +5,10 @@
 # Site
 title: 程序员的博客
 subtitle: 来一个BLOG吧!!
-description:
+description: C# Java SpringMVC Python
 author: Yoze 
-language: zh-CN
-timezone:
+language: zh-cn
+timezone: Asia/Shanghai
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
@@ -55,6 +55,9 @@ index_generator:
 # Category & Tag
 default_category: uncategorized
 category_map:
+	编程: programming
+	生活: life
+	其他: other
 tag_map:
 
 # Date / Time format
@@ -72,7 +75,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: claudia
+theme: tranquilpeak
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html

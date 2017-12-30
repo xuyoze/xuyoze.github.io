@@ -2,7 +2,9 @@
 title: Git 错误 fatal Pathspec xxx is in submodule
 date: 2017-12-29 22:19:49
 tags: git
+category: 编程
 ---
+
 ![git](/images/git.png "post-cover")
 
 下午在创建`git`仓库的时候,有一个文件夹出现了异常,导致上传到 github后只有一个空的文件夹.

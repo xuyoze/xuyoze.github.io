@@ -3,6 +3,7 @@ title: 写在2017年的最后几天
 date: 2017-12-29 14:11:44
 comments: true
 tags: Jabber
+category: 生活
 ---
 ![times](/images/times.jpg "post-cover")
 
