@@ -45,8 +45,10 @@ use_disqus: false
 disqus_url: https://haojen.disqus.com/embed.js
 
 # Miscellaneous
-google_analytics:
 favicon: /favicon.ico
+use_baidu_analytics: true
+baidu_analytics: d484c06aa1636ad18eeb208942d6f840
+google_analytics: false
 #twitter:
 #google_plus:
 #fb_admins:
