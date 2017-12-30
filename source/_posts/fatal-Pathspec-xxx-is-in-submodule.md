@@ -3,21 +3,23 @@ title: Git 错误 fatal Pathspec xxx is in submodule
 date: 2017-12-29 22:19:49
 tags: git
 category: 编程
+thumbnailImage: git.png
 ---
-
-![git](/images/git.png "post-cover")
 
 下午在创建`git`仓库的时候,有一个文件夹出现了异常,导致上传到 github后只有一个空的文件夹.
 
 而文件夹中无任何文件.
-
-![error](/images/Snipaste_2017-12-29_22-26-11.png)
 
 更换机器后,拉取仓储,重新添加文件后试图将文件添加到git报错.
 
 ```
 fatal: Pathspec 'claudia' is in submodule...
 ```
+
+<!-- more -->
+
+{% asset_img Snipaste_2017-12-29_22-26-11.png error %}
+
 
 查找网友解决方法,在此记录如下:
 

@@ -637,11 +637,11 @@ meta: false
 actions: false
 ```
 
-|Variable|Description|
-|---|---|
-|disqusIdentifier|Define a unique string which is used to look up a page's thread in the Disqus system.|
-|keywords|Define keywords for search engines. you can also define global keywords in Hexo configuration file.|
-|clearReading|Hide sidebar on all article page to let article take full width to improve reading, and enjoy wide images and cover images. Useless if `theme.sidebar_behavior` is equal to `3` or `4`. (true: enable, false: disable). Default behavior : `theme.clear_reading` value in theme configuration file.|
+|Variable|Description|说明|
+|---|---|---|
+|disqusIdentifier|Define a unique string which is used to look up a page's thread in the Disqus system.|定义的一个唯一字符串,用于在Disqus中定位当前文章|
+|keywords|Define keywords for search engines. you can also define global keywords in Hexo configuration file.|定义给搜索引擎使用的关键词,同样也可以在HEXO的配置文件中定义全局关键词|
+|clearReading|Hide sidebar on all article page to let article take full width to improve reading, and enjoy wide images and cover images. Useless if `theme.sidebar_behavior` is equal to `3` or `4`. (true: enable, false: disable). Default behavior : `theme.clear_reading` value in theme configuration file.|在文章页隐藏侧边栏,来提供更好的阅读体验,同时可以欣赏顶部头图.当`theme.sidebar_behavior` 值为`3`或`4`时不生效.(true: enable, false: disable)默认值:`theme.clear_reading`在主题配置文件中|
 |autoThumbnailImage|Automatically select the cover image or the first photo from the gallery of a post if there is no thumbnail image as the thumbnail image. `autoThumbnailImage` overwrite the setting `auto_thumbnail_image` in the theme configuration file|
 |thumbnailImage|Image displayed in index view.|
 |thumbnailImagePosition|Display thumbnail image at the right of title in index pages (`right`, `left` or `bottom`). `thumbnailImagePosition` overwrite the setting `thumbnail_image_position` in the theme configuration file|

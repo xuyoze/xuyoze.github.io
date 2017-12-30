@@ -6,7 +6,7 @@ tags: Jabber
 2017年最有一个工作日了!!!
 
 午饭时间准备折腾下githubpage.网上找了些教程,想在我这WIN7的机器上安装个`jekyll`可是这玩意需要`ruby`运行环境....
-
+<!-- more -->
 ![rube](/images/ruby-rube.jpg "post-cover")
 
 作为一个码猴, 我的8G破车已经无法再来一个运行环境啦!!
