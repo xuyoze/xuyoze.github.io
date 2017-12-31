@@ -1,16 +1,18 @@
 ---
-title: 你好曹丹的世界
+title: 你好世界
 date: 2017-12-29
 tags: Jabber
+thumbnailImage: ruby-rube.jpg
 ---
 2017年最有一个工作日了!!!
 
 午饭时间准备折腾下githubpage.网上找了些教程,想在我这WIN7的机器上安装个`jekyll`可是这玩意需要`ruby`运行环境....
 <!-- more -->
-![rube](/images/ruby-rube.jpg "post-cover")
+
+{% asset_img ruby-rube.jpg Version %}
 
 作为一个码猴, 我的8G破车已经无法再来一个运行环境啦!!
-- Nodjs
+- Nodejs
 - .Net
 - Java
 - Python
@@ -34,8 +36,11 @@ tags: Jabber
 
 然后我就码了这个小文...
 
+接着折腾去了
+
 我闪~
 
 **参考文章**
 - [官方文档](https://hexo.io/zh-cn/docs/)
+- [主题](http://louisbarranqueiro.github.io/hexo-theme-tranquilpeak/)
 - [通过Hexo在Github上搭建博客教程](https://www.jianshu.com/p/858ecf233db9)
