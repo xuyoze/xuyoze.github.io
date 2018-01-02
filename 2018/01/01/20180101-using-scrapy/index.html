@@ -1,0 +1,534 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="程序员的博客">
+    <title>练习使用scrapy框架抓取图虫图片 - 程序员的博客</title>
+    <meta name="author" content="Yoze">
+    
+    
+    
+    <meta name="description" content="元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。 所以在家三天不出屋。。。。 以上都是借口，其实就是懒，就是宅 整好在熟悉一把Python的爬虫框架scrapy。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习scray框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.">
+<meta name="keywords" content="python,scrapy">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="练习使用scrapy框架抓取图虫图片">
+<meta property="og:url" content="http://xuyoze.github.io/2018/01/01/20180101-using-scrapy/index.html">
+<meta property="og:site_name" content="程序员的博客">
+<meta property="og:description" content="元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。 所以在家三天不出屋。。。。 以上都是借口，其实就是懒，就是宅 整好在熟悉一把Python的爬虫框架scrapy。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习scray框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="http://xuyoze.github.io/2018/01/01/20180101-using-scrapy/01.jpg">
+<meta property="og:image" content="http://xuyoze.github.io/2018/01/01/20180101-using-scrapy/02.jpg">
+<meta property="og:updated_time" content="2018-01-02T06:45:26.837Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="练习使用scrapy框架抓取图虫图片">
+<meta name="twitter:description" content="元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。 所以在家三天不出屋。。。。 以上都是借口，其实就是懒，就是宅 整好在熟悉一把Python的爬虫框架scrapy。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习scray框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.">
+<meta name="twitter:image" content="http://xuyoze.github.io/2018/01/01/20180101-using-scrapy/01.jpg">
+<meta name="twitter:creator" content="@yoze">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://xuyoze.github.io/assets/images/avator.jpg"/>
+    
+    
+        <meta property="og:image" content="http://xuyoze.github.io/2018/01/01/20180101-using-scrapy/32615134.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://xuyoze.github.io/2018/01/01/20180101-using-scrapy/32615134.jpg" />
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-pz4cc6y13wt2trzqa8l3n9v0yykr0sstdaheem7qj628nhjmhp9pfawvqawz.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-111753291-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+
+    
+    <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d484c06aa1636ad18eeb208942d6f840";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">程序员的博客</a>
+    </div>
+    
+        
+            <a  class="header-right-picture "
+                href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/avator.jpg" alt="作者的图片"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/avator.jpg" alt="作者的图片"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yoze</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>[抖腿患者] [轻度强迫症] [道德败坏] [深井冰] [擅撸码] [喜看剧] [房奴]</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="首页"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="分类"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="标签"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="归档"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="关于"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/xuyoze" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            练习使用scrapy框架抓取图虫图片
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time itemprop="datePublished" datetime="2018-01-01T21:14:58+08:00">
+	
+		    1月 01, 2018
+    	
+    </time>
+    
+        <span>发布在 </span>
+        
+    <a class="category-link" href="/categories/programming/">编程</a>
+
+
+    
+</div>
+
+    
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p>元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。</p>
+<p>所以在家三天不出屋。。。。</p>
+<p><em>以上都是借口，其实就是懒，就是宅</em></p>
+<p>整好在熟悉一把<code>Python</code>的爬虫框架<code>scrapy</code>。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习<code>scray</code>框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.<br><a id="more"></a></p>
+<h1 id="table-of-contents">目录</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#爬取前准备"><span class="toc-text">爬取前准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#爬去入口"><span class="toc-text">爬去入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原图地址分析"><span class="toc-text">原图地址分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码编写"><span class="toc-text">代码编写</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建爬虫"><span class="toc-text">创建爬虫</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#相关代码编写"><span class="toc-text">相关代码编写</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关问题"><span class="toc-text">相关问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#接口请求不成功或返回的数据为空"><span class="toc-text">接口请求不成功或返回的数据为空</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本机没有图片处理相关库"><span class="toc-text">本机没有图片处理相关库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-text">其他</span></a></li></ol>
+<h2 id="爬取前准备"><a href="#爬取前准备" class="headerlink" title="爬取前准备"></a>爬取前准备</h2><p>图虫的相关图片都是按照Tag的方式进行组织的, 所以我们很容易就可以根据标签进行某类图片的爬取。<br>下面是图虫的入口页面<a href="https://tuchong.com/explore/" target="_blank" rel="noopener">图虫入口</a><br><img src="/2018/01/01/20180101-using-scrapy/01.jpg" title="listpage"></p>
+<h3 id="爬去入口"><a href="#爬去入口" class="headerlink" title="爬去入口"></a>爬去入口</h3><p>每个标签或专题页面采用的是JS动态翻页,我们可以通过WEB工具的网络功能,或者fidder查看对应的请求.<br>获得如下接口请求地址:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://tuchong.com/rest/tags/%E8%87%AA%E7%84%B6/posts?page=1&amp;count=20&amp;type=hot</span><br></pre></td></tr></table></figure></p>
+<p>可以看到, 有几个可用的参数:</p>
+<ul>
+<li>tags</li>
+<li>page</li>
+<li>count</li>
+<li>type</li>
+</ul>
+<p>由此我们可以得到分页的接口数据如下图所示这个是列表页的基本数据信息<br><img src="/2018/01/01/20180101-using-scrapy/02.jpg" title="listpage"></p>
+<p>返回的JSON数据中每个post节点下都有一个images数组,如果数组中有对个值表示,这个是一组套图.<br>因此我们可以根据 images 节点,循环并获取相应的套图。</p>
+<h3 id="原图地址分析"><a href="#原图地址分析" class="headerlink" title="原图地址分析"></a>原图地址分析</h3><p>由于列表页是缩放后的图片, 所以我们只能手动查看并归纳原图文件的路径规则.<br>也许哪一天规则就变了也说不上但是目前还是可用的。</p>
+<p>规则如下：</p>
+<ul>
+<li><p>缩略图<br>规则 :<code>https://photo.tuchong.com/</code>+ author_id + <code>/g/</code> + img_id +<code>.jpg</code>  如:<a href="https://photo.tuchong.com/1370833/g/20494979.jpg" target="_blank" rel="noopener">https://photo.tuchong.com/1370833/g/20494979.jpg</a><br><code>author_id</code> 是图片作者的编号,<code>img_id</code> 是图片编号</p>
+</li>
+<li><p>原图<br>规则 :<code>https://photo.tuchong.com/</code>+ author_id + <code>/f/</code> + img_id +<code>.jpg</code>  如:<a href="https://photo.tuchong.com/1370833/f/20494979.jpg" target="_blank" rel="noopener">https://photo.tuchong.com/1370833/f/20494979.jpg</a><br><code>author_id</code> 是图片作者的编号,<code>img_id</code> 是图片编号</p>
+</li>
+</ul>
+<h2 id="代码编写"><a href="#代码编写" class="headerlink" title="代码编写"></a>代码编写</h2><h3 id="创建爬虫"><a href="#创建爬虫" class="headerlink" title="创建爬虫"></a>创建爬虫</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建项目</span></span><br><span class="line">scrapy startproject TuchongProj</span><br><span class="line"><span class="comment"># 进入项目</span></span><br><span class="line">cd TuchongProj</span><br><span class="line"><span class="comment"># 创建爬虫</span></span><br><span class="line">scrapy genspider tuchong tuchong.com</span><br></pre></td></tr></table></figure>
+<h3 id="相关代码编写"><a href="#相关代码编写" class="headerlink" title="相关代码编写"></a>相关代码编写</h3><p>tuchong.py 演示代码, 代码未实现翻页,只取了一页数据。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TuchongSpider</span><span class="params">(scrapy.Spider)</span>:</span></span><br><span class="line">    name = <span class="string">'tuchong'</span></span><br><span class="line">    allowed_domains = [<span class="string">'tuchong.com'</span>]</span><br><span class="line">    <span class="comment"># 请求URL构造参数</span></span><br><span class="line">    tag = <span class="string">"风光"</span></span><br><span class="line">    types = <span class="string">"hot"</span>  <span class="comment"># new</span></span><br><span class="line">    order = <span class="string">"weekly"</span></span><br><span class="line">    page = <span class="string">"1"</span></span><br><span class="line">    count = <span class="string">"20"</span></span><br><span class="line">    baseUrl = <span class="string">"https://tuchong.com/rest/tags/"</span></span><br><span class="line">    start_urls = [baseUrl + tag + <span class="string">"/posts?page="</span> +</span><br><span class="line">                  page + <span class="string">"&amp;count="</span> + count + <span class="string">"&amp;order="</span> + order]</span><br><span class="line">    <span class="comment"># 暂时未做分页功能(循环page)</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></span><br><span class="line">        posts = json.loads(response.body)[<span class="string">'postList'</span>]</span><br><span class="line">        <span class="keyword">for</span> post <span class="keyword">in</span> posts:</span><br><span class="line">            images = post[<span class="string">'images'</span>]</span><br><span class="line">            <span class="keyword">for</span> img <span class="keyword">in</span> images:</span><br><span class="line">                item = TuchongprojItem()</span><br><span class="line">                author_id = img[<span class="string">'user_id'</span>]</span><br><span class="line">                img_id = img[<span class="string">'img_id'</span>]</span><br><span class="line">                img_link = <span class="string">"https://photo.tuchong.com/"</span> + \</span><br><span class="line">                    str(author_id) + <span class="string">"/f/"</span> + str(img_id) + <span class="string">".jpg"</span></span><br><span class="line">                item[<span class="string">'authorId'</span>] = author_id</span><br><span class="line">                item[<span class="string">'imageId'</span>] = img_id</span><br><span class="line">                item[<span class="string">'imageLink'</span>] = img_link</span><br><span class="line">                <span class="keyword">yield</span> item</span><br></pre></td></tr></table></figure>
+<p>我在定义的Item有三个字段， 这里只取了接口JSON数据中的author_id和img_id 按照上面的分析的规则,拼装了图片的大图路径。</p>
+<p>Item定义：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TuchongprojItem</span><span class="params">(scrapy.Item)</span>:</span></span><br><span class="line">    <span class="comment"># define the fields for your item here like:</span></span><br><span class="line">    authorId = scrapy.Field()</span><br><span class="line">    imageId = scrapy.Field()</span><br><span class="line">    imageLink = scrapy.Field()</span><br></pre></td></tr></table></figure></p>
+<p>接下来就是定义pipeline处理相关数据了<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TuchongprojPipeline</span><span class="params">(ImagesPipeline)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_media_requests</span><span class="params">(self, item, info)</span>:</span></span><br><span class="line">        imglink = item[<span class="string">'imageLink'</span>]</span><br><span class="line">        <span class="comment"># print(imglink)</span></span><br><span class="line">        <span class="keyword">yield</span> scrapy.Request(imglink)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">item_completed</span><span class="params">(self, result, item, info)</span>:</span></span><br><span class="line">        <span class="comment"># print(result)</span></span><br><span class="line">        <span class="comment"># [(True, &#123;'url': 'https://photo.tuchong.com/1660246/f/9281459.jpg', 'path': 'full/e8876e7547c166d58876c3fce547d6819d8bf031.jpg', 'checksum': 'd78e6ba1115ae956878bdc630173ea7a'&#125;)]</span></span><br><span class="line">        <span class="comment"># 取出图片存放的地址</span></span><br><span class="line">        author_id = item[<span class="string">'authorId'</span>]</span><br><span class="line">        img_id = item[<span class="string">'imageId'</span>]</span><br><span class="line">        patharr = [x[<span class="string">"path"</span>] <span class="keyword">for</span> ok, x <span class="keyword">in</span> result <span class="keyword">if</span> ok]</span><br><span class="line">        path = patharr[<span class="number">0</span>]</span><br><span class="line">        <span class="comment"># 文件重命名(原地址,新地址)</span></span><br><span class="line">        os.rename(images_store + path, images_store + <span class="string">"full/"</span> +</span><br><span class="line">                  str(author_id) + <span class="string">"-"</span> + str(img_id) + <span class="string">".jpg"</span>)</span><br><span class="line">        <span class="keyword">return</span> item</span><br></pre></td></tr></table></figure></p>
+<p>由于要处理图片数据,我们使用scrapy提供<code>ImagesPipeline</code>进行图片处理.<br>重写<code>ImagesPipeline</code>里的两个方法:<br><code>get_media_requests</code>方法, 主要负责发送图片获取请求, 这里我们将我们拼装的图片大图地址传递给<code>Request</code>进行图片处理.</p>
+<p><code>item_completed</code>方法, 这里主要用来对下载回来的图片进行重命名处理. 我们的命名规则是 <code>author_id+&#39;-&#39;+img_id</code>, 这样便于我们进行排序 ^_^</p>
+<p>使用<code>ImagesPipeline</code> 我们需要制定图片的存放地址,同时我们需要启用当前pipeline</p>
+<p>settings.py<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Configure item pipelines</span><br><span class="line"># See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html</span><br><span class="line">ITEM_PIPELINES = &#123;</span><br><span class="line">    &apos;TuchongProj.pipelines.TuchongprojPipeline&apos;: 300,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 爬取图片后图片存放的位置</span><br><span class="line">IMAGES_STORE = &quot;F:/_tuchong/fengjing/&quot;</span><br></pre></td></tr></table></figure></p>
+<p>好了, 爬虫差不多了,运行下试试吧!</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">scrapy crawl tuchong</span><br></pre></td></tr></table></figure>
+<h2 id="相关问题"><a href="#相关问题" class="headerlink" title="相关问题"></a>相关问题</h2><h3 id="接口请求不成功或返回的数据为空"><a href="#接口请求不成功或返回的数据为空" class="headerlink" title="接口请求不成功或返回的数据为空"></a>接口请求不成功或返回的数据为空</h3><ul>
+<li><p>UserAgent问题.<br>自定义UserAgent,在settings.py修改UA</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Crawl responsibly by identifying yourself (and your website) on the user-agent</span><br><span class="line">USER_AGENT = &apos;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3294.6 Safari/537.36&apos;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>请求过快,相应不过来<br>限制并发数,增加延迟时间</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Configure maximum concurrent requests performed by Scrapy (default: 16)</span><br><span class="line">CONCURRENT_REQUESTS = 1</span><br><span class="line"></span><br><span class="line"># Configure a delay for requests for the same website (default: 0)</span><br><span class="line"># See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay</span><br><span class="line"># See also autothrottle settings and docs</span><br><span class="line">DOWNLOAD_DELAY = 5</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="本机没有图片处理相关库"><a href="#本机没有图片处理相关库" class="headerlink" title="本机没有图片处理相关库"></a>本机没有图片处理相关库</h3><div class="alert danger"><p>No module named ‘PIL’</p>
+</div>
+<p>安装Pillow库<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">pip install pillow</span><br></pre></td></tr></table></figure></p>
+<p><a href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/0014320027235877860c87af5544f25a8deeb55141d60c5000" target="_blank" rel="noopener">pillow基本知识</a></p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>自己写爬虫,纯粹就是玩票。<br>我们自己写爬虫，去爬取别人的数据， 尽量将并发降低，不要给站点造成骚扰。<br>如果可以尽量按照爬虫协议来爬取应允的内容。</p>
+<p>附 图虫的爬虫协议<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Robots.txt file from http://www.tuchong.com</span><br><span class="line"># All robots will spider the domain</span><br><span class="line"></span><br><span class="line">User-agent: YandexBot</span><br><span class="line">Disallow: /</span><br><span class="line">User-agent: MJ12bot</span><br><span class="line">Disallow: /</span><br><span class="line">User-agent: Purebot</span><br><span class="line">Disallow: /</span><br><span class="line">User-agent: psbot</span><br><span class="line">Disallow: /</span><br><span class="line"></span><br><span class="line">User-agent: *</span><br><span class="line">Disallow: /admin/</span><br><span class="line">Disallow: /api/</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p> 相关学习资料</p>
+<ul>
+<li><a href="http://scrapy-chs.readthedocs.io/zh_CN/1.0/intro/tutorial.html" target="_blank" rel="noopener">scrapy文档(CN)</a></li>
+</ul>
+</blockquote>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/python/">python</a> <a class="tag tag--primary tag--small t-link" href="/tags/scrapy/">scrapy</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/31/the-last-days-of-2017/" data-tooltip="写在2017年的最后几天" aria-label="下一篇: 写在2017年的最后几天">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/01/20180101-using-scrapy/" title="分享到 Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="目录">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 Yoze. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/31/the-last-days-of-2017/" data-tooltip="写在2017年的最后几天" aria-label="下一篇: 写在2017年的最后几天">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/01/20180101-using-scrapy/" title="分享到 Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="目录">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <i id="btn-close-shareoptions" class="fa fa-close"></i>
+    <ul class="share-options">
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/01/20180101-using-scrapy/">
+                    <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/avator.jpg" alt="作者的图片"/>
+        
+            <h4 id="about-card-name">Yoze</h4>
+        
+            <div id="about-card-bio"><p>[抖腿患者] [轻度强迫症] [道德败坏] [深井冰] [擅撸码] [喜看剧] [房奴]</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>哒哒哒</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Mars
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-peofhqjkzcghmndknakluequy1y6owxdwpaqyju9ntl9zxnk7rdolb3rjjoj.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://xuyoze.github.io/2018/01/01/20180101-using-scrapy/';
+                 
+                    this.page.identifier = '2018/01/01/20180101-using-scrapy/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'yoze';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+
+    </body>
+</html>
