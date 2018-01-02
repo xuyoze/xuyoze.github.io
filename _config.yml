@@ -12,7 +12,7 @@ timezone: Asia/Shanghai
 
 # URL http://xuyoze.github.io
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://xuyoze.github.io
+url: https://xuyoze.github.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
