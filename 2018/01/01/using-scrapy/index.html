@@ -15,17 +15,17 @@
 <meta name="keywords" content="python,scrapy">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="练习使用scrapy框架抓取图虫图片">
-<meta property="og:url" content="https://xuyoze.github.io/2018/01/01/20180101-using-scrapy/index.html">
+<meta property="og:url" content="https://xuyoze.github.io/2018/01/01/using-scrapy/index.html">
 <meta property="og:site_name" content="程序员的博客">
 <meta property="og:description" content="元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。 所以在家三天不出屋。。。。 以上都是借口，其实就是懒，就是宅 整好在熟悉一把Python的爬虫框架scrapy。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习scray框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:image" content="https://xuyoze.github.io/2018/01/01/20180101-using-scrapy/01.jpg">
-<meta property="og:image" content="https://xuyoze.github.io/2018/01/01/20180101-using-scrapy/02.jpg">
-<meta property="og:updated_time" content="2018-01-02T06:45:26.837Z">
+<meta property="og:image" content="https://xuyoze.github.io/2018/01/01/using-scrapy/01.jpg">
+<meta property="og:image" content="https://xuyoze.github.io/2018/01/01/using-scrapy/02.jpg">
+<meta property="og:updated_time" content="2018-01-04T09:05:52.131Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="练习使用scrapy框架抓取图虫图片">
 <meta name="twitter:description" content="元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。 所以在家三天不出屋。。。。 以上都是借口，其实就是懒，就是宅 整好在熟悉一把Python的爬虫框架scrapy。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习scray框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.">
-<meta name="twitter:image" content="https://xuyoze.github.io/2018/01/01/20180101-using-scrapy/01.jpg">
+<meta name="twitter:image" content="https://xuyoze.github.io/2018/01/01/using-scrapy/01.jpg">
 <meta name="twitter:creator" content="@yoze">
     
     
@@ -35,8 +35,8 @@
         <meta property="og:image" content="https://xuyoze.github.io/assets/images/avator.png"/>
     
     
-        <meta property="og:image" content="https://xuyoze.github.io/2018/01/01/20180101-using-scrapy/32615134.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://xuyoze.github.io/2018/01/01/20180101-using-scrapy/32615134.jpg" />
+        <meta property="og:image" content="https://xuyoze.github.io/2018/01/01/using-scrapy/32615134.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://xuyoze.github.io/2018/01/01/using-scrapy/32615134.jpg" />
     
     
     
@@ -244,7 +244,7 @@
 <p><em>以上都是借口，其实就是懒，就是宅</em></p>
 <p>整好在熟悉一把<code>Python</code>的爬虫框架<code>scrapy</code>。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习<code>scray</code>框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.<br><a id="more"></a></p>
 <h1 id="table-of-contents">目录</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#爬取前准备"><span class="toc-text">爬取前准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#爬去入口"><span class="toc-text">爬去入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原图地址分析"><span class="toc-text">原图地址分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码编写"><span class="toc-text">代码编写</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建爬虫"><span class="toc-text">创建爬虫</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#相关代码编写"><span class="toc-text">相关代码编写</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关问题"><span class="toc-text">相关问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#接口请求不成功或返回的数据为空"><span class="toc-text">接口请求不成功或返回的数据为空</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本机没有图片处理相关库"><span class="toc-text">本机没有图片处理相关库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-text">其他</span></a></li></ol>
-<h2 id="爬取前准备"><a href="#爬取前准备" class="headerlink" title="爬取前准备"></a>爬取前准备</h2><p>图虫的相关图片都是按照Tag的方式进行组织的, 所以我们很容易就可以根据标签进行某类图片的爬取。<br>下面是图虫的入口页面<a href="https://tuchong.com/explore/" target="_blank" rel="noopener">图虫入口</a><br><img src="/2018/01/01/20180101-using-scrapy/01.jpg" title="listpage"></p>
+<h2 id="爬取前准备"><a href="#爬取前准备" class="headerlink" title="爬取前准备"></a>爬取前准备</h2><p>图虫的相关图片都是按照Tag的方式进行组织的, 所以我们很容易就可以根据标签进行某类图片的爬取。<br>下面是图虫的入口页面<a href="https://tuchong.com/explore/" target="_blank" rel="noopener">图虫入口</a><br><img src="/2018/01/01/using-scrapy/01.jpg" title="listpage"></p>
 <h3 id="爬去入口"><a href="#爬去入口" class="headerlink" title="爬去入口"></a>爬去入口</h3><p>每个标签或专题页面采用的是JS动态翻页,我们可以通过WEB工具的网络功能,或者fidder查看对应的请求.<br>获得如下接口请求地址:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://tuchong.com/rest/tags/%E8%87%AA%E7%84%B6/posts?page=1&amp;count=20&amp;type=hot</span><br></pre></td></tr></table></figure></p>
 <p>可以看到, 有几个可用的参数:</p>
 <ul>
@@ -253,7 +253,7 @@
 <li>count</li>
 <li>type</li>
 </ul>
-<p>由此我们可以得到分页的接口数据如下图所示这个是列表页的基本数据信息<br><img src="/2018/01/01/20180101-using-scrapy/02.jpg" title="listpage"></p>
+<p>由此我们可以得到分页的接口数据如下图所示这个是列表页的基本数据信息<br><img src="/2018/01/01/using-scrapy/02.jpg" title="listpage"></p>
 <p>返回的JSON数据中每个post节点下都有一个images数组,如果数组中有对个值表示,这个是一组套图.<br>因此我们可以根据 images 节点,循环并获取相应的套图。</p>
 <h3 id="原图地址分析"><a href="#原图地址分析" class="headerlink" title="原图地址分析"></a>原图地址分析</h3><p>由于列表页是缩放后的图片, 所以我们只能手动查看并归纳原图文件的路径规则.<br>也许哪一天规则就变了也说不上但是目前还是可用的。</p>
 <p>规则如下：</p>
@@ -315,7 +315,8 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/04/centos-intall-nginx/" data-tooltip="CentOS 安装Nginx步骤" aria-label="上一篇: CentOS 安装Nginx步骤">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -334,7 +335,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -342,7 +343,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/01/20180101-using-scrapy/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/01/using-scrapy/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -394,7 +395,8 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/04/centos-intall-nginx/" data-tooltip="CentOS 安装Nginx步骤" aria-label="上一篇: CentOS 安装Nginx步骤">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -413,7 +415,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -421,7 +423,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/01/20180101-using-scrapy/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/01/using-scrapy/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -454,7 +456,7 @@
             
             
             <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/01/20180101-using-scrapy/">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/01/using-scrapy/">
                     <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                 </a>
             </li>
@@ -512,9 +514,9 @@
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'https://xuyoze.github.io/2018/01/01/20180101-using-scrapy/';
+                 this.page.url = 'https://xuyoze.github.io/2018/01/01/using-scrapy/';
                  
-                    this.page.identifier = '2018/01/01/20180101-using-scrapy/';
+                    this.page.identifier = '2018/01/01/using-scrapy/';
                  
              };
             (function() {

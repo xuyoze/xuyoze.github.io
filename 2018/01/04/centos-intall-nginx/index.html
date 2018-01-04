@@ -1,0 +1,531 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="程序员的博客">
+    <title>CentOS 安装Nginx步骤 - 程序员的博客</title>
+    <meta name="author" content="Yoze">
+    
+    
+    
+    <meta name="description" content="CentOS 下安装Nginx相关步骤,以及一些常见的错误. 本篇文章内容为转载内容，原文为博客园博主hafiz,查看原文请移步Centos7安装Nginx实战">
+<meta name="keywords" content="centos,nginx">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="CentOS 安装Nginx步骤">
+<meta property="og:url" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/index.html">
+<meta property="og:site_name" content="程序员的博客">
+<meta property="og:description" content="CentOS 下安装Nginx相关步骤,以及一些常见的错误. 本篇文章内容为转载内容，原文为博客园博主hafiz,查看原文请移步Centos7安装Nginx实战">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/894443-20170522211619117-1585471045.png">
+<meta property="og:image" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/894443-20170522211459382-336608973.png">
+<meta property="og:updated_time" content="2018-01-04T09:15:35.879Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS 安装Nginx步骤">
+<meta name="twitter:description" content="CentOS 下安装Nginx相关步骤,以及一些常见的错误. 本篇文章内容为转载内容，原文为博客园博主hafiz,查看原文请移步Centos7安装Nginx实战">
+<meta name="twitter:image" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/894443-20170522211619117-1585471045.png">
+<meta name="twitter:creator" content="@yoze">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://xuyoze.github.io/assets/images/avator.png"/>
+    
+    
+        <meta property="og:image" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/nginx.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/nginx.png" />
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-pz4cc6y13wt2trzqa8l3n9v0yykr0sstdaheem7qj628nhjmhp9pfawvqawz.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-111753291-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+
+    
+    <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d484c06aa1636ad18eeb208942d6f840";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">程序员的博客</a>
+    </div>
+    
+        
+            <a  class="header-right-picture "
+                href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/avator.png" alt="作者的图片"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/avator.png" alt="作者的图片"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yoze</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>[抖腿患者] [轻度强迫症] [道德败坏] [深井冰] [擅撸码] [喜看剧] [房奴]</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="首页"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="分类"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="标签"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="归档"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="关于"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/xuyoze" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            CentOS 安装Nginx步骤
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time itemprop="datePublished" datetime="2018-01-04T12:20:58+08:00">
+	
+		    1月 04, 2018
+    	
+    </time>
+    
+        <span>发布在 </span>
+        
+    <a class="category-link" href="/categories/reprint/">转载</a>
+
+
+    
+</div>
+
+    
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p>CentOS 下安装Nginx相关步骤,以及一些常见的错误.</p>
+<div class="alert info"><p>本篇文章内容为转载内容，原文为博客园博主<a href="http://www.cnblogs.com/hafiz/" target="_blank" rel="noopener">hafiz</a>,查看原文请移步<a href="http://www.cnblogs.com/hafiz/p/6891458.html" target="_blank" rel="noopener">Centos7安装Nginx实战</a></p>
+</div>
+<a id="more"></a>
+<h1 id="table-of-contents">目录</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、背景"><span class="toc-text">一、背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、基本概念以及应用场景"><span class="toc-text">二、基本概念以及应用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么是nginx"><span class="toc-text">1.什么是nginx</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Nginx的应用场景"><span class="toc-text">2.Nginx的应用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、安装步骤"><span class="toc-text">三、安装步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-检查并安装所需的依赖软件"><span class="toc-text">1.检查并安装所需的依赖软件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-下载nginx源码包"><span class="toc-text">2.下载nginx源码包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-解压缩源码包并进入"><span class="toc-text">3.解压缩源码包并进入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-配置编译参数-可以使用-configure-–help查询详细参数"><span class="toc-text">4.配置编译参数(可以使用./configure –help查询详细参数)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-编译并安装"><span class="toc-text">5.编译并安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-启动nginx"><span class="toc-text">6.启动nginx</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-停止"><span class="toc-text">7.停止</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-重启及重新加载配置"><span class="toc-text">8.重启及重新加载配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-测试"><span class="toc-text">9.测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#问题汇总"><span class="toc-text">问题汇总</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CentOS-防火墙"><span class="toc-text">CentOS 防火墙</span></a></li></ol></li></ol>
+<h2 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h2><p>最近在写一些自己的项目，用到了nginx，所以自己动手来在Centos7上安装nginx,以下是安装步骤。</p>
+<h2 id="二、基本概念以及应用场景"><a href="#二、基本概念以及应用场景" class="headerlink" title="二、基本概念以及应用场景"></a>二、基本概念以及应用场景</h2><h3 id="1-什么是nginx"><a href="#1-什么是nginx" class="headerlink" title="1.什么是nginx"></a>1.什么是nginx</h3><p>Nginx是一款使用C语言开发的高性能的http 服务器/反向代理服务器及电子邮件（IMAP/POP3）代理服务器。由俄罗斯的程序设计师Igor Sysoev所开发，官方测试nginx能够支支撑5万并发链接，并且cpu、内存等资源消耗却非常低，运行非常稳定。</p>
+<h3 id="2-Nginx的应用场景"><a href="#2-Nginx的应用场景" class="headerlink" title="2.Nginx的应用场景"></a>2.Nginx的应用场景</h3><p>1)、http服务器。Nginx是一个http服务可以独立提供http服务。可以做网页静态服务器。</p>
+<p>2)、虚拟主机。可以实现在一台服务器虚拟出多个网站。例如个人网站使用的虚拟主机。</p>
+<p>3)、反向代理，负载均衡。当网站的访问量达到一定程度后，单台服务器不能满足用户的请求时，需要用多台服务器集群可以使用nginx做反向代理。并且多台服务器可以平均分担负载，不会因为某台服务器负载高宕机而某台服务器闲置的情况。</p>
+<h2 id="三、安装步骤"><a href="#三、安装步骤" class="headerlink" title="三、安装步骤"></a>三、安装步骤</h2><h3 id="1-检查并安装所需的依赖软件"><a href="#1-检查并安装所需的依赖软件" class="headerlink" title="1.检查并安装所需的依赖软件"></a>1.检查并安装所需的依赖软件</h3><p>1).gcc:nginx编译依赖gcc环境<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install gcc-c++</span><br></pre></td></tr></table></figure></p>
+<p>2).pcre:(Perl Compatible Regular Expressions)是一个Perl库，包括 perl 兼容的正则表达式库。nginx的http模块使用pcre来解析正则表达式.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install -y pcre pcre-devel</span><br></pre></td></tr></table></figure></p>
+<p>3).zlib：该库提供了很多种压缩和解压缩的方式，nginx使用zlib对http包的内容进行gzip。<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install -y zlib zlib-devel</span><br></pre></td></tr></table></figure></p>
+<p>4).openssl:一个强大的安全套接字层密码库，囊括主要的密码算法、常用的密钥和证书封装管理功能及SSL协议，并提供丰富的应用程序供测试或其它目的使用。nginx不仅支持http协议，还支持https（即在ssl协议上传输http）.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install -y openssl openssl-devel</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-下载nginx源码包"><a href="#2-下载nginx源码包" class="headerlink" title="2.下载nginx源码包"></a>2.下载nginx源码包</h3><p>下载命令：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http://nginx.org/download/nginx-1.12.0.tar.gz</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-解压缩源码包并进入"><a href="#3-解压缩源码包并进入" class="headerlink" title="3.解压缩源码包并进入"></a>3.解压缩源码包并进入</h3><p>1).解压缩：tar -zxvf nginx-1.12.0.tar.gz<br>2).进入解压缩后文件夹：cd nginx-1.12.0</p>
+<h3 id="4-配置编译参数-可以使用-configure-–help查询详细参数"><a href="#4-配置编译参数-可以使用-configure-–help查询详细参数" class="headerlink" title="4.配置编译参数(可以使用./configure –help查询详细参数)"></a>4.配置编译参数(可以使用./configure –help查询详细参数)</h3><p>命令：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./configure \</span><br><span class="line">--prefix=/usr/<span class="built_in">local</span>/nginx \</span><br><span class="line">--pid-path=/var/run/nginx/nginx.pid \</span><br><span class="line">--lock-path=/var/lock/nginx.lock \</span><br><span class="line">--error-log-path=/var/<span class="built_in">log</span>/nginx/error.log \</span><br><span class="line">--http-log-path=/var/<span class="built_in">log</span>/nginx/access.log \</span><br><span class="line">--with-http_gzip_static_module \</span><br><span class="line">--http-client-body-temp-path=/var/temp/nginx/client \</span><br><span class="line">--http-proxy-temp-path=/var/temp/nginx/proxy \</span><br><span class="line">--http-fastcgi-temp-path=/var/temp/nginx/fastcgi \</span><br><span class="line">--http-uwsgi-temp-path=/var/temp/nginx/uwsgi \</span><br><span class="line">--http-scgi-temp-path=/var/temp/nginx/scgi</span><br></pre></td></tr></table></figure></p>
+<p>注：安装之前需要手动创建上面指定的nginx文件夹，即<code>/var/temp</code>、<code>/var/temp/nginx</code>、<code>/var/run/nginx/</code>文件夹，否则启动时报错</p>
+<h3 id="5-编译并安装"><a href="#5-编译并安装" class="headerlink" title="5.编译并安装"></a>5.编译并安装</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<p>可以进入<code>/usr/local/nginx</code>查看文件是否存在conf、sbin、html文件夹，若存在则安装成功</p>
+<h3 id="6-启动nginx"><a href="#6-启动nginx" class="headerlink" title="6.启动nginx"></a>6.启动nginx</h3><p>1).进入安装目录<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">whereis nginx</span><br><span class="line"><span class="comment"># /usr/local/nginx</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/nginx/sbin/</span><br></pre></td></tr></table></figure></p>
+<p>2).启动<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">./nginx</span><br></pre></td></tr></table></figure></p>
+<p>3).若报错：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[emerg] open() &quot;/var/run/nginx/nginx.pid&quot; failed (2: No such file or directory)</span><br></pre></td></tr></table></figure></p>
+<p>需要查看下是不是在/var/run文件夹下不存在nginx文件夹，不存在则新建</p>
+<p>4).查看是否启动：<code>ps -ef | grep nginx</code></p>
+<p>如果有master和worker两个进程证明启动成功<br><img src="/2018/01/04/centos-intall-nginx/894443-20170522211619117-1585471045.png" title="nginx"></p>
+<p>注意：执行<code>./nginx</code>启动nginx，这里可以 <code>-c</code> 指定加载的nginx配置文件，如下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">./nginx -c /usr/local/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure></p>
+<p>如果不指定 <code>-c</code>，nginx在启动时默认加载<code>conf/nginx.conf</code>文件，此文件的地址也可以在编译安装nginx时指定<code>./configure</code>的参数(–conf-path= 指向配置文件（nginx.conf）)</p>
+<h3 id="7-停止"><a href="#7-停止" class="headerlink" title="7.停止"></a>7.停止</h3><p>1).暴利kill(不推荐使用)<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">kill -9 processId</span><br></pre></td></tr></table></figure></p>
+<p>2).快速停止<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd /usr/local/nginx/sbin &amp;&amp; ./nginx -s stop</span><br></pre></td></tr></table></figure></p>
+<p>此方式相当于先查出nginx进程id再使用kill命令强制杀掉进程</p>
+<p>3).完整停止(建议使用)<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd /usr/local/nginx/sbin &amp;&amp; ./nginx -s quit</span><br></pre></td></tr></table></figure></p>
+<p>此方式停止步骤是待nginx进程处理任务完毕进行停止</p>
+<h3 id="8-重启及重新加载配置"><a href="#8-重启及重新加载配置" class="headerlink" title="8.重启及重新加载配置"></a>8.重启及重新加载配置</h3><p>1.先停止再启动（建议使用）<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">./nginx -s quit &amp;&amp; ./nginx</span><br></pre></td></tr></table></figure></p>
+<p>2.重新加载配置文件<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">./nginx -s reload</span><br></pre></td></tr></table></figure></p>
+<h3 id="9-测试"><a href="#9-测试" class="headerlink" title="9.测试"></a>9.测试</h3><p>nginx安装成功，启动nginx,即可通过ip地址来访问nginx:<br><img src="/2018/01/04/centos-intall-nginx/894443-20170522211459382-336608973.png" title="nginx"></p>
+<h2 id="问题汇总"><a href="#问题汇总" class="headerlink" title="问题汇总"></a>问题汇总</h2><h3 id="CentOS-防火墙"><a href="#CentOS-防火墙" class="headerlink" title="CentOS 防火墙"></a>CentOS 防火墙</h3><blockquote>
+<p>CentOS 7.0默认使用的是firewall作为防火墙，这里改为iptables防火墙步骤。</p>
+</blockquote>
+<ol>
+<li><p>关闭firewall：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop firewalld.service <span class="comment">#停止firewall</span></span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld.service <span class="comment">#禁止firewall开机启动</span></span><br><span class="line">firewall-cmd --state <span class="comment">#查看默认防火墙状态（关闭后显示notrunning，开启后显示running）</span></span><br><span class="line">systemctl restart firewalld.service <span class="comment">#重启firewall</span></span><br><span class="line">firewall-cmd --query-port=80/tcp <span class="comment">#查询端口是否开放</span></span><br><span class="line">firewall-cmd --add-port=80/tcp <span class="comment">#开启指定端口</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>iptables防火墙（这里iptables已经安装，下面进行配置）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/iptables-config  <span class="comment">#编辑防火墙配置文件</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># sampleconfiguration for iptables service</span></span><br><span class="line"><span class="comment"># you can edit thismanually or use system-config-firewall</span></span><br><span class="line"><span class="comment"># please do not askus to add additional ports/services to this default configuration</span></span><br><span class="line"><span class="meta">*filter</span></span><br><span class="line"><span class="string">:INPUT</span> <span class="string">ACCEPT</span> <span class="string">[0:0]</span></span><br><span class="line"><span class="string">:FORWARD</span> <span class="string">ACCEPT[0:0]</span></span><br><span class="line"><span class="string">:OUTPUT</span> <span class="string">ACCEPT[0:0]</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-m</span> <span class="string">state--state</span> <span class="string">RELATED,ESTABLISHED</span> <span class="bullet">-j</span> <span class="string">ACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-p</span> <span class="string">icmp</span> <span class="bullet">-jACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-i</span> <span class="string">lo</span> <span class="bullet">-jACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-p</span> <span class="string">tcp</span> <span class="bullet">-mstate</span> <span class="bullet">--state</span> <span class="string">NEW</span> <span class="bullet">-m</span> <span class="string">tcp</span> <span class="bullet">--dport</span> <span class="number">22</span> <span class="bullet">-j</span> <span class="string">ACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-p</span> <span class="string">tcp</span> <span class="bullet">-m</span> <span class="string">state</span> <span class="bullet">--state</span> <span class="string">NEW</span> <span class="bullet">-m</span> <span class="string">tcp</span> <span class="bullet">--dport</span> <span class="number">80</span> <span class="bullet">-jACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-p</span> <span class="string">tcp</span> <span class="bullet">-m</span> <span class="string">state</span> <span class="bullet">--state</span> <span class="string">NEW</span> <span class="bullet">-m</span> <span class="string">tcp</span> <span class="bullet">--dport</span> <span class="number">8080</span><span class="bullet">-j</span> <span class="string">ACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-j</span> <span class="string">REJECT--reject-with</span> <span class="string">icmp-host-prohibited</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">FORWARD</span> <span class="bullet">-jREJECT</span> <span class="bullet">--reject-with</span> <span class="string">icmp-host-prohibited</span></span><br><span class="line"><span class="string">COMMIT</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">:wq! <span class="comment">#保存退出</span></span><br></pre></td></tr></table></figure>
+<div class="alert warning"><p>备注：这里使用80和8080端口为例。<em>*</em>部分一般添加到“-A INPUT -p tcp -m state –state NEW -m tcp–dport 22 -j ACCEPT”行的上面或者下面，切记不要添加到最后一行，否则防火墙重启后不生效。</p>
+</div>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart iptables.service <span class="comment">#最后重启防火墙使配置生效</span></span><br><span class="line">systemctl <span class="built_in">enable</span> iptables.service <span class="comment">#设置防火墙开机启动</span></span><br></pre></td></tr></table></figure>
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/centos/">centos</a> <a class="tag tag--primary tag--small t-link" href="/tags/nginx/">nginx</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" data-tooltip="发布JAVA SpringMVC站点到Centos7" aria-label="上一篇: 发布JAVA SpringMVC站点到Centos7">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/01/using-scrapy/" data-tooltip="练习使用scrapy框架抓取图虫图片" aria-label="下一篇: 练习使用scrapy框架抓取图虫图片">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/centos-intall-nginx/" title="分享到 Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="目录">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 Yoze. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" data-tooltip="发布JAVA SpringMVC站点到Centos7" aria-label="上一篇: 发布JAVA SpringMVC站点到Centos7">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/01/using-scrapy/" data-tooltip="练习使用scrapy框架抓取图虫图片" aria-label="下一篇: 练习使用scrapy框架抓取图虫图片">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/centos-intall-nginx/" title="分享到 Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="目录">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <i id="btn-close-shareoptions" class="fa fa-close"></i>
+    <ul class="share-options">
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/centos-intall-nginx/">
+                    <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/avator.png" alt="作者的图片"/>
+        
+            <h4 id="about-card-name">Yoze</h4>
+        
+            <div id="about-card-bio"><p>[抖腿患者] [轻度强迫症] [道德败坏] [深井冰] [擅撸码] [喜看剧] [房奴]</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>哒哒哒</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Mars
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-peofhqjkzcghmndknakluequy1y6owxdwpaqyju9ntl9zxnk7rdolb3rjjoj.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'https://xuyoze.github.io/2018/01/04/centos-intall-nginx/';
+                 
+                    this.page.identifier = '2018/01/04/centos-intall-nginx/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'yoze';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+
+    </body>
+</html>

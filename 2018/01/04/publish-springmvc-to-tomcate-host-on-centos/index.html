@@ -6,25 +6,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="程序员的博客">
-    <title>你好世界 - 程序员的博客</title>
+    <title>发布JAVA SpringMVC站点到Centos7 - 程序员的博客</title>
     <meta name="author" content="Yoze">
     
     
     
-    <meta name="description" content="2017年最有一个工作日了!!! 午饭时间准备折腾下githubpage.网上找了些教程,想在我这WIN7的机器上安装个jekyll可是这玩意需要ruby运行环境….">
-<meta name="keywords" content="Jabber">
+    <meta name="description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题.">
+<meta name="keywords" content="centos,java,springmvc,tomcat">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="你好世界">
-<meta property="og:url" content="https://xuyoze.github.io/2017/12/29/hello/index.html">
+<meta property="og:title" content="发布JAVA SpringMVC站点到Centos7">
+<meta property="og:url" content="https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/index.html">
 <meta property="og:site_name" content="程序员的博客">
-<meta property="og:description" content="2017年最有一个工作日了!!! 午饭时间准备折腾下githubpage.网上找了些教程,想在我这WIN7的机器上安装个jekyll可是这玩意需要ruby运行环境….">
+<meta property="og:description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题.">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:image" content="https://xuyoze.github.io/2017/12/29/hello/ruby-rube.jpg">
-<meta property="og:updated_time" content="2018-01-02T01:09:59.950Z">
+<meta property="og:updated_time" content="2018-01-04T09:05:09.149Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="你好世界">
-<meta name="twitter:description" content="2017年最有一个工作日了!!! 午饭时间准备折腾下githubpage.网上找了些教程,想在我这WIN7的机器上安装个jekyll可是这玩意需要ruby运行环境….">
-<meta name="twitter:image" content="https://xuyoze.github.io/2017/12/29/hello/ruby-rube.jpg">
+<meta name="twitter:title" content="发布JAVA SpringMVC站点到Centos7">
+<meta name="twitter:description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题.">
 <meta name="twitter:creator" content="@yoze">
     
     
@@ -33,9 +31,6 @@
     
         <meta property="og:image" content="https://xuyoze.github.io/assets/images/avator.png"/>
     
-    
-        <meta property="og:image" content="https://xuyoze.github.io/2017/12/29/hello/ruby-rube.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://xuyoze.github.io/2017/12/29/hello/ruby-rube.jpg" />
     
     
     
@@ -214,16 +209,22 @@
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title" itemprop="headline">
-            你好世界
+            发布JAVA SpringMVC站点到Centos7
         </h1>
     
     
         <div class="post-meta">
-    <time itemprop="datePublished" datetime="2017-12-29T00:00:00+08:00">
+    <time itemprop="datePublished" datetime="2018-01-04T16:05:53+08:00">
 	
-		    12月 29, 2017
+		    1月 04, 2018
     	
     </time>
+    
+        <span>发布在 </span>
+        
+    <a class="category-link" href="/categories/programming/">编程</a>
+
+
     
 </div>
 
@@ -232,34 +233,7 @@
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <p>2017年最有一个工作日了!!!</p>
-<p>午饭时间准备折腾下githubpage.网上找了些教程,想在我这WIN7的机器上安装个<code>jekyll</code>可是这玩意需要<code>ruby</code>运行环境….<br><a id="more"></a></p>
-<img src="/2017/12/29/hello/ruby-rube.jpg" title="Version">
-<p>作为一个码猴, 我的8G破车已经无法再来一个运行环境啦!!</p>
-<ul>
-<li>Nodejs</li>
-<li>.Net</li>
-<li>Java</li>
-<li>Python</li>
-<li>Golang</li>
-<li>…</li>
-</ul>
-<p>嗯…, 我装这么多也只是玩票啊…<br>哈哈,但是我真的不想在装一个<code>ruby</code>了…</p>
-<p><strong>使用 HEXO</strong></p>
-<p>为啥用hexo??</p>
-<p>搜索引擎关键字匹配的, 其实我本来并不知道的..</p>
-<p>官网看了下还不错哦 <a href="https://hexi.io" target="_blank" rel="noopener">hexi</a> ,感谢这位台湾的小哥.</p>
-<p>另外找了一片<a href="https://www.jianshu.com/p/858ecf233db9" target="_blank" rel="noopener">普及文章</a>, 照着一步步就搞定了.(<em>画瓢我还是可以的</em>)</p>
-<p>接下来就是选个模板啥的, 这些都可以按照<code>hexo</code>官方文档来做.</p>
-<p>然后我就码了这个小文…</p>
-<p>接着折腾去了</p>
-<p>我闪~</p>
-<p><strong>参考文章</strong></p>
-<ul>
-<li><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">官方文档</a></li>
-<li><a href="http://louisbarranqueiro.github.io/hexo-theme-tranquilpeak/" target="_blank" rel="noopener">主题</a></li>
-<li><a href="https://www.jianshu.com/p/858ecf233db9" target="_blank" rel="noopener">通过Hexo在Github上搭建博客教程</a></li>
-</ul>
+            <p>本文主要记录发布<code>SpringMVC</code>站点到 <code>CentOS 7</code> 中的<code>tomcat</code>过程中出现的一些问题.</p>
 
             
 
@@ -270,7 +244,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/Jabber/">Jabber</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/centos/">centos</a> <a class="tag tag--primary tag--small t-link" href="/tags/java/">java</a> <a class="tag tag--primary tag--small t-link" href="/tags/springmvc/">springmvc</a> <a class="tag tag--primary tag--small t-link" href="/tags/tomcat/">tomcat</a>
 
             </div>
         
@@ -280,8 +254,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/29/about-hexo/" data-tooltip="HEXO 中的一些常用方法" aria-label="上一篇: HEXO 中的一些常用方法">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -289,7 +262,8 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/04/centos-intall-nginx/" data-tooltip="CentOS 安装Nginx步骤" aria-label="下一篇: CentOS 安装Nginx步骤">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -307,7 +281,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2017/12/29/hello/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -359,8 +333,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/29/about-hexo/" data-tooltip="HEXO 中的一些常用方法" aria-label="上一篇: HEXO 中的一些常用方法">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -368,7 +341,8 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/04/centos-intall-nginx/" data-tooltip="CentOS 安装Nginx步骤" aria-label="下一篇: CentOS 安装Nginx步骤">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -386,7 +360,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2017/12/29/hello/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -419,7 +393,7 @@
             
             
             <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2017/12/29/hello/">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/">
                     <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                 </a>
             </li>
@@ -477,9 +451,9 @@
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'https://xuyoze.github.io/2017/12/29/hello/';
+                 this.page.url = 'https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/';
                  
-                    this.page.identifier = '2017/12/29/hello/';
+                    this.page.identifier = '2018/01/04/publish-springmvc-to-tomcate-host-on-centos/';
                  
              };
             (function() {
