@@ -55,6 +55,7 @@ index_generator:
 # Category & Tag
 default_category: uncategorized
 category_map:
+  转载: reprint
 	编程: programming
 	生活: life
 	其他: other
