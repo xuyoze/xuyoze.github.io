@@ -56,9 +56,9 @@ index_generator:
 default_category: uncategorized
 category_map:
   转载: reprint
-	编程: programming
-	生活: life
-	其他: other
+  编程: programming
+  生活: life
+  其他: other
 tag_map:
 
 # Date / Time format
