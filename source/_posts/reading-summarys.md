@@ -1,7 +1,7 @@
 ---
 title: 一些读书笔记
 date: 2018-01-11 09:28:04
-categories: life
+categories: 读书
 tags: note
 thumbnailImage: book.jpg
 ---
