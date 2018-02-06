@@ -4,11 +4,14 @@ date: 2018-01-04 16:05:53
 categories: 编程
 tags: [java,springmvc,centos,tomcat]
 ---
+
 本文主要记录发布`SpringMVC`站点到 `CentOS 7` 中的`tomcat`过程中出现的一些问题.
 
 ## Tomcat 安装
 
 官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.
+
+<!--more-->
 
 ### 下载安装
 
@@ -94,3 +97,6 @@ vi /etc/sysconfig/iptables
 ```
 
 ## Tomcat 配置
+
+
+----- 未完 ----
