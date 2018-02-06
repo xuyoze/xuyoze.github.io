@@ -1,0 +1,497 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="程序员的博客">
+    <title>Gradle 使用小记 - 程序员的博客</title>
+    <meta name="author" content="Yoze">
+    
+    
+    
+    <meta name="description" content="Maven和Gradle 是Java生态下常用的两个项目构建工具。其中，Maven多用于Java项目构建，而Gradle在Android的世界中被广泛使用， 特别是在Google放弃Eclipse转用AS作为首选IDE之后，Gradle又得到了相当大范围的推广。">
+<meta name="keywords" content="gradle">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Gradle 使用小记">
+<meta property="og:url" content="https://xuyoze.github.io/2018/01/09/gradle-starting/index.html">
+<meta property="og:site_name" content="程序员的博客">
+<meta property="og:description" content="Maven和Gradle 是Java生态下常用的两个项目构建工具。其中，Maven多用于Java项目构建，而Gradle在Android的世界中被广泛使用， 特别是在Google放弃Eclipse转用AS作为首选IDE之后，Gradle又得到了相当大范围的推广。">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="https://xuyoze.github.io/2018/01/09/gradle-starting/gradle-01.png">
+<meta property="og:updated_time" content="2018-01-10T01:27:21.760Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradle 使用小记">
+<meta name="twitter:description" content="Maven和Gradle 是Java生态下常用的两个项目构建工具。其中，Maven多用于Java项目构建，而Gradle在Android的世界中被广泛使用， 特别是在Google放弃Eclipse转用AS作为首选IDE之后，Gradle又得到了相当大范围的推广。">
+<meta name="twitter:image" content="https://xuyoze.github.io/2018/01/09/gradle-starting/gradle-01.png">
+<meta name="twitter:creator" content="@yoze">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://xuyoze.github.io/assets/images/avator.png"/>
+    
+    
+        <meta property="og:image" content="https://xuyoze.github.io/2018/01/09/gradle-starting/gradle-01.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://xuyoze.github.io/2018/01/09/gradle-starting/gradle-01.png" />
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-pz4cc6y13wt2trzqa8l3n9v0yykr0sstdaheem7qj628nhjmhp9pfawvqawz.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-111753291-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+
+    
+    <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d484c06aa1636ad18eeb208942d6f840";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">程序员的博客</a>
+    </div>
+    
+        
+            <a  class="header-right-picture "
+                href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/avator.png" alt="作者的图片"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/avator.png" alt="作者的图片"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yoze</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>[抖腿患者] [轻度强迫症] [道德败坏] [深井冰] [擅撸码] [喜看剧] [房奴]</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="首页"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="分类"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="标签"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="归档"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="关于"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/xuyoze" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            Gradle 使用小记
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time itemprop="datePublished" datetime="2018-01-09T15:10:55+08:00">
+	
+		    1月 09, 2018
+    	
+    </time>
+    
+        <span>发布在 </span>
+        
+    <a class="category-link" href="/categories/programming/">编程</a>
+
+
+    
+</div>
+
+    
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p>Maven和Gradle 是Java生态下常用的两个项目构建工具。<br>其中，Maven多用于Java项目构建，而Gradle在Android的世界中被广泛使用， 特别是在Google放弃Eclipse转用AS作为首选IDE之后，Gradle又得到了相当大范围的推广。<br><a id="more"></a></p>
+<h2 id="Gradle的安装"><a href="#Gradle的安装" class="headerlink" title="Gradle的安装"></a>Gradle的安装</h2><p><strong>Window下Gradle安装</strong></p>
+<p>前提: 本机已安装JDK</p>
+<p>下载 Gradle4.4.1 zip包<a href="https://services.gradle.org/distributions/gradle-4.4.1-all.zip" target="_blank" rel="noopener">下载地址</a></p>
+<p>解压到本机磁盘:<code>c:\gradle</code></p>
+<p>配置本机PATH: 添加<code>C:\gradle\gradle-4.4.1\bin</code>到PATH值</p>
+<p>测试:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gradle -v</span><br><span class="line">-----------------</span><br><span class="line">Gradle 4.4.1</span><br><span class="line">-----------------</span><br></pre></td></tr></table></figure></p>
+<h2 id="Gradle基本概念"><a href="#Gradle基本概念" class="headerlink" title="Gradle基本概念"></a>Gradle基本概念</h2><ul>
+<li>项目:指我们的构建产物（比如Jar包）或实施产物（将应用程序部署到生产环境）。<strong>一个项目包含一个或多个任务。</strong></li>
+<li>任务:指不可分的最小工作单元，执行构建工作（比如编译项目或执行测试）。</li>
+</ul>
+<p>每一构建都包含一个或多个项目.<br><img src="/2018/01/09/gradle-starting/gradle-01.png" title="关系"></p>
+<h2 id="Gradle常用命令"><a href="#Gradle常用命令" class="headerlink" title="Gradle常用命令"></a>Gradle常用命令</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://lippiouyang.gitbooks.io/gradle-in-action-cn/content/" target="_blank" rel="noopener">Gradle实战</a></li>
+<li><a href="http://gradledoc.qiniudn.com/2.0/userguide/userguide.html" target="_blank" rel="noopener">用户指南2.0</a></li>
+<li><a href="https://waylau.gitbooks.io/gradle-2-user-guide/" target="_blank" rel="noopener">用户指南2.0</a></li>
+<li><a href="https://waylau.gitbooks.io/gradle-3-user-guide/" target="_blank" rel="noopener">用户指南3.0</a></li>
+</ul>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/gradle/">gradle</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/11/reading-summarys/" data-tooltip="一些读书笔记" aria-label="上一篇: 一些读书笔记">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" data-tooltip="发布JAVA SpringMVC站点到Centos7" aria-label="下一篇: 发布JAVA SpringMVC站点到Centos7">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/09/gradle-starting/" title="分享到 Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018. Post with 💙 by Yoze.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/11/reading-summarys/" data-tooltip="一些读书笔记" aria-label="上一篇: 一些读书笔记">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" data-tooltip="发布JAVA SpringMVC站点到Centos7" aria-label="下一篇: 发布JAVA SpringMVC站点到Centos7">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/09/gradle-starting/" title="分享到 Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <i id="btn-close-shareoptions" class="fa fa-close"></i>
+    <ul class="share-options">
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/09/gradle-starting/">
+                    <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/avator.png" alt="作者的图片"/>
+        
+            <h4 id="about-card-name">Yoze</h4>
+        
+            <div id="about-card-bio"><p>[抖腿患者] [轻度强迫症] [道德败坏] [深井冰] [擅撸码] [喜看剧] [房奴]</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>哒哒哒</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Mars
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-peofhqjkzcghmndknakluequy1y6owxdwpaqyju9ntl9zxnk7rdolb3rjjoj.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'https://xuyoze.github.io/2018/01/09/gradle-starting/';
+                 
+                    this.page.identifier = '2018/01/09/gradle-starting/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'yoze';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+
+    </body>
+</html>
