@@ -5,7 +5,6 @@ categories: 编程
 tags: [centos,docker,jenkins]
 thumbnailImage: 55c9c3cd17e71.jpg
 ---
- ## 在CentOS7上使用Docker部署Jenkins
 
 > 公司使用了Jenkins进行项目构建,为了熟悉整个流程, 我决定自己搭建一个Jenkins环境练练手.
 
