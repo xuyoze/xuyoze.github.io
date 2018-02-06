@@ -11,18 +11,18 @@
     
     
     
-    <meta name="description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题. Tomcat 安装官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装. 下载安装访问Apache Tomcat官网, 找到 tar包地址并复制, # 切换常用目录cd /usr/local/# 下载指定的tomcat版本wget http://mirr">
+    <meta name="description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题. Tomcat 安装官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.">
 <meta name="keywords" content="centos,java,springmvc,tomcat">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="发布JAVA SpringMVC站点到Centos7">
 <meta property="og:url" content="https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/index.html">
 <meta property="og:site_name" content="程序员的博客">
-<meta property="og:description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题. Tomcat 安装官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装. 下载安装访问Apache Tomcat官网, 找到 tar包地址并复制, # 切换常用目录cd /usr/local/# 下载指定的tomcat版本wget http://mirr">
+<meta property="og:description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题. Tomcat 安装官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2018-01-08T10:50:12.211Z">
+<meta property="og:updated_time" content="2018-02-06T11:31:41.453Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="发布JAVA SpringMVC站点到Centos7">
-<meta name="twitter:description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题. Tomcat 安装官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装. 下载安装访问Apache Tomcat官网, 找到 tar包地址并复制, # 切换常用目录cd /usr/local/# 下载指定的tomcat版本wget http://mirr">
+<meta name="twitter:description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题. Tomcat 安装官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.">
 <meta name="twitter:creator" content="@yoze">
     
     
@@ -235,6 +235,7 @@
         <div class="main-content-wrap">
             <p>本文主要记录发布<code>SpringMVC</code>站点到 <code>CentOS 7</code> 中的<code>tomcat</code>过程中出现的一些问题.</p>
 <h2 id="Tomcat-安装"><a href="#Tomcat-安装" class="headerlink" title="Tomcat 安装"></a>Tomcat 安装</h2><p>官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.</p>
+<a id="more"></a>
 <h3 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h3><p>访问<a href="https://tomcat.apache.org/download-80.cgi" target="_blank" rel="noopener">Apache Tomcat</a>官网,</p>
 <p>找到 tar包地址并复制,</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换常用目录</span></span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载指定的tomcat版本</span></span><br><span class="line">wget http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-8/v8.5.24/bin/apache-tomcat-8.5.24.tar.gz</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt;</span><br><span class="line"><span class="comment"># 解压tar包</span></span><br><span class="line">tar -zxvf apache-tomcat-8.0.26.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除原始包</span></span><br><span class="line">rm -rf apache-tomcat-8.0.26.tar.gz.tar.gz</span><br><span class="line"><span class="comment"># 重命名</span></span><br><span class="line">mv apache-tomcat-8.0.26 tomcat</span><br></pre></td></tr></table></figure>
@@ -249,7 +250,8 @@
 <h4 id="防火墙禁止端口"><a href="#防火墙禁止端口" class="headerlink" title="防火墙禁止端口"></a>防火墙禁止端口</h4><p>防火墙开放8080端口,增加8080端口到防火墙配置中，执行以下操作：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/iptables</span><br><span class="line"><span class="comment"># 增加以下代码</span></span><br><span class="line">-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 8080 -j ACCEPT</span><br></pre></td></tr></table></figure>
 <p>重启防火墙<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># service iptables restart</span></span><br></pre></td></tr></table></figure></p>
-<h2 id="Tomcat-配置"><a href="#Tomcat-配置" class="headerlink" title="Tomcat 配置"></a>Tomcat 配置</h2>
+<h2 id="Tomcat-配置"><a href="#Tomcat-配置" class="headerlink" title="Tomcat 配置"></a>Tomcat 配置</h2><p>—– 未完 —-</p>
+
             
 
         </div>

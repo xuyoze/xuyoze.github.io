@@ -360,7 +360,7 @@
     </article>
     
     
-    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
+    <article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
         <div class="postShorten-wrap">
             
             <div class="postShorten-header">
@@ -388,34 +388,14 @@
 
             </div>
             
-                <div class="postShorten-content" itemprop="articleBody">
+                <div class="postShorten-excerpt" itemprop="articleBody">
                     <p>本文主要记录发布<code>SpringMVC</code>站点到 <code>CentOS 7</code> 中的<code>tomcat</code>过程中出现的一些问题.</p>
 <h2 id="Tomcat-安装"><a href="#Tomcat-安装" class="headerlink" title="Tomcat 安装"></a>Tomcat 安装</h2><p>官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.</p>
-<h3 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h3><p>访问<a href="https://tomcat.apache.org/download-80.cgi" target="_blank" rel="noopener">Apache Tomcat</a>官网,</p>
-<p>找到 tar包地址并复制,</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换常用目录</span></span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载指定的tomcat版本</span></span><br><span class="line">wget http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-8/v8.5.24/bin/apache-tomcat-8.5.24.tar.gz</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt;</span><br><span class="line"><span class="comment"># 解压tar包</span></span><br><span class="line">tar -zxvf apache-tomcat-8.0.26.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除原始包</span></span><br><span class="line">rm -rf apache-tomcat-8.0.26.tar.gz.tar.gz</span><br><span class="line"><span class="comment"># 重命名</span></span><br><span class="line">mv apache-tomcat-8.0.26 tomcat</span><br></pre></td></tr></table></figure>
-<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动tomcat</span></span><br><span class="line">/usr/<span class="built_in">local</span>/tomcat/bin/startup.sh</span><br><span class="line"></span><br><span class="line">Using CATALINA_BASE:  /usr/<span class="built_in">local</span>/tomcat</span><br><span class="line">Using CATALINA_HOME:  /usr/<span class="built_in">local</span>/tomcat</span><br><span class="line">Using CATALINA_TMPDIR: /usr/<span class="built_in">local</span>/tomcat/temp</span><br><span class="line">Using JRE_HOME:        /usr/java/jdk1.8.0_60</span><br><span class="line">Using CLASSPATH:      /usr/<span class="built_in">local</span>/tomcat/bin/bootstrap.jar:/usr/<span class="built_in">local</span>/tomcat/bin/tomcat-juli.jar</span><br><span class="line">Tomcat started.</span><br></pre></td></tr></table></figure>
-<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>通过以下地址查看tomcat是否运行正常:</p>
-<p><a href="http://192.168.11.52:8080/" target="_blank" rel="noopener">http://192.168.11.52:8080/</a></p>
-<p>看到tomcat系统界面，说明安装成功！</p>
-<h3 id="停止"><a href="#停止" class="headerlink" title="停止"></a>停止</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 停止tomcat</span></span><br><span class="line">/usr/<span class="built_in">local</span>/tomcat/bin/shutdown.sh</span><br></pre></td></tr></table></figure>
-<h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><h4 id="JAVA路径不正确"><a href="#JAVA路径不正确" class="headerlink" title="JAVA路径不正确"></a>JAVA路径不正确</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Neither the JAVA_HOME nor the JRE_HOME environment variable is defined</span><br><span class="line">At least one of these environment variable is needed to run this program</span><br></pre></td></tr></table></figure>
-<p>则要注意提前设置java路径</p>
-<p>在<code>apache-tomcat-8.0.26/bin/setclasspath.sh</code>中添加一下内容<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/java/jdk1.8.0_60  </span><br><span class="line"><span class="built_in">export</span> JRE_HOME=/usr/java/jdk1.8.0_60/jre</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib:<span class="variable">$JRE_HOME</span>/lib:<span class="variable">$CLASSPATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$JRE_HOME</span>/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="防火墙禁止端口"><a href="#防火墙禁止端口" class="headerlink" title="防火墙禁止端口"></a>防火墙禁止端口</h4><p>防火墙开放8080端口,增加8080端口到防火墙配置中，执行以下操作：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/iptables</span><br><span class="line"><span class="comment"># 增加以下代码</span></span><br><span class="line">-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 8080 -j ACCEPT</span><br></pre></td></tr></table></figure>
-<p>重启防火墙<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># service iptables restart</span></span><br></pre></td></tr></table></figure></p>
-<h2 id="Tomcat-配置"><a href="#Tomcat-配置" class="headerlink" title="Tomcat 配置"></a>Tomcat 配置</h2>
                     
+                        <a href="/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" class="postShorten-excerpt_link link">
+                            阅读全文
+                        </a>
                         
-
-                    
-                    
-                        <p>
-                            <a href="/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
                     
                 </div>
             
