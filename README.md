@@ -10,9 +10,9 @@ A fast, simple & powerful blog framework
 
 博客基于Hexo搭建,了解更多关于Hexo的使用方法,可以查看>> [hexo官网](https://hexo.io/)
 
-### Claudia Theme
+### tranquilpeak
 
-当前的blog使用了Claudia主题, 你可以在这里查看具体内容 [Claudia](https://github.com/Haojen/hexo-theme-Claudia).
+当前的blog使用了tranquilpeak作为主题, 你可以在这里查看具体内容 [tranquilpeak](https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak).
 
 ### Yu Writer
 

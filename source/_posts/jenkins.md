@@ -9,7 +9,8 @@ thumbnailImage: jenkins.png
 
 由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!
 
-<!--nore-->
+<!--more-->
+<!-- toc -->
 
 ### Jenkins的安装
 
@@ -27,13 +28,93 @@ Jenkins的安装步骤,其实还蛮简单的,网上有不少的教程,现在Jenk
 同时, 我们会在Git上创建两个分支,master,develop,从而演示多分支,多环境构建.
 
 
-
 ### 2. 使用pipeline创建多分支任务
 
-#### 2.1 分支拉取
+#### 2.1 项目创建
+{% asset_img 2-1.jpg creatnew %}
+
+使用jenkein pipeline 模式,对项目的不同分支进行构建,因此我们在jenkins中选择多分支pipeline类型创建项目.
+{% asset_img 2-2.jpg creatnew %}
+
+拉取项目源码,我的代码是存放于github上的, 顾可以直接算则github源,如果是公司内建的git服务器,可以选择git.
+github的插件应该是默认安装的, 如果没有请在插件管理中添加相应的github插件.
+
+{% asset_img 0309-1648.jpg source %}
+
+接下来修改Jenkinsfile名称
+{% asset_img 0309-1649.jpg source %}
 
 #### 2.2 Jenkinsfile
+使用Jenkins Pipeline方式进行项目构建项目,需要熟悉Jenkinsfile的编写方法.
+可以[参考官网](https://jenkins.io/doc/)给出的教程,进行相关学习.
+这里贴一下演示使用的源码, 其中的某些地方会在后面进行说明:
 
+```groovy
+#!groovy
+def deployToTomcat(localWarPath, warName) {
+    def server = "192.168.87.76"
+    def result = sh(
+            script: "curl --upload-file ${localWarPath} 'http://${TOMCAT_ACCOUNT}@${server}/manager/text/deploy?update=true&path=/${warName}'",
+            returnStdout: true
+    ).trim()
+    if (result.startsWith('OK')) {
+        echo result
+    } else {
+        error result
+    }
+}
+
+def deployService(localJarPath, remotePath) {
+    sh "ssh 'root@localhost76' 'service demo-svc stop'"
+    sh "scp ${localJarPath} root@localhost76:${remotePath}"
+    sh "ssh 'root@localhost76' 'service demo-svc start'"
+    sh "ssh 'root@localhost76' 'service demo-svc status'"
+}
+
+pipeline {
+    agent any
+    environment {
+        TOMCAT_ACCOUNT = credentials('tomcat-account-test-env')
+    }
+    stages {
+        stage('Build Test') {
+            when {
+                branch 'develop'
+            }
+            steps {
+                sh 'mvn -B clean package -Dspecific -P dev'
+            }
+        }
+        stage('Deploy Test') {
+            when {
+                branch 'develop'
+                expression {
+                    currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                }
+            }
+            parallel {
+                stage('Deploy Test Api') {
+                    steps {
+                        deployToTomcat('demo-api/target/demo-api.war', 'demo-api')
+                    }
+                }
+                stage('Deploy Test Web') {
+                    steps {
+                        deployToTomcat('demo-web/target/demo-web.war', 'demo-web')
+                    }
+                }
+                stage('Deploy Test Svc') {
+                    steps {
+                        deployService('demo-svc/target/demo-svc.jar', '/var/services/demo-svc.jar')
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+git
 ### 3. Web项目的构建
 
 #### 3.1 Tomcat Manager配置
