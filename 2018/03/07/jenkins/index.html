@@ -1,0 +1,506 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="程序员的博客">
+    <title>Jenkins自动构建发布SpringBoot项目 - 程序员的博客</title>
+    <meta name="author" content="Yoze">
+    
+    
+    
+    <meta name="description" content="手头在做的java项目,希望通过Jenkins进行构建并发布到测试环境机器,从而避免手动发布的繁琐步骤. 由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!">
+<meta name="keywords" content="centos,docker,jenkins,java,tomcat">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Jenkins自动构建发布SpringBoot项目">
+<meta property="og:url" content="https://xuyoze.github.io/2018/03/07/jenkins/index.html">
+<meta property="og:site_name" content="程序员的博客">
+<meta property="og:description" content="手头在做的java项目,希望通过Jenkins进行构建并发布到测试环境机器,从而避免手动发布的繁琐步骤. 由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/1.png">
+<meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/2-1.jpg">
+<meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/2-2.jpg">
+<meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/0309-1648.jpg">
+<meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/0309-1649.jpg">
+<meta property="og:updated_time" content="2018-03-09T09:16:06.248Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jenkins自动构建发布SpringBoot项目">
+<meta name="twitter:description" content="手头在做的java项目,希望通过Jenkins进行构建并发布到测试环境机器,从而避免手动发布的繁琐步骤. 由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!">
+<meta name="twitter:image" content="https://xuyoze.github.io/2018/03/07/jenkins/1.png">
+<meta name="twitter:creator" content="@yoze">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://xuyoze.github.io/assets/images/avator.png"/>
+    
+    
+        <meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/jenkins.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://xuyoze.github.io/2018/03/07/jenkins/jenkins.png" />
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-pz4cc6y13wt2trzqa8l3n9v0yykr0sstdaheem7qj628nhjmhp9pfawvqawz.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-111753291-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+
+    
+    <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d484c06aa1636ad18eeb208942d6f840";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">程序员的博客</a>
+    </div>
+    
+        
+            <a  class="header-right-picture "
+                href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/avator.png" alt="作者的图片"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/avator.png" alt="作者的图片"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yoze</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>[抖腿患者] [轻度强迫症] [道德败坏] [深井冰] [擅撸码] [喜看剧] [房奴]</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="首页"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="分类"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="标签"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="归档"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="关于"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/xuyoze" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            Jenkins自动构建发布SpringBoot项目
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time itemprop="datePublished" datetime="2018-03-07T17:15:36+08:00">
+	
+		    3月 07, 2018
+    	
+    </time>
+    
+        <span>发布在 </span>
+        
+    <a class="category-link" href="/categories/programming/">编程</a>
+
+
+    
+</div>
+
+    
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p>手头在做的java项目,希望通过Jenkins进行构建并发布到测试环境机器,从而避免手动发布的繁琐步骤.</p>
+<p>由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!</p>
+<a id="more"></a>
+<h1 id="table-of-contents">目录</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Jenkins的安装"><span class="toc-text">Jenkins的安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-项目简单描述"><span class="toc-text">1. 项目简单描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-使用pipeline创建多分支任务"><span class="toc-text">2. 使用pipeline创建多分支任务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-项目创建"><span class="toc-text">2.1 项目创建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-Jenkinsfile"><span class="toc-text">2.2 Jenkinsfile</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Web项目的构建"><span class="toc-text">3. Web项目的构建</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-Tomcat-Manager配置"><span class="toc-text">3.1 Tomcat Manager配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-Jenkins中Tomcate-Mannager凭据添加"><span class="toc-text">3.2 Jenkins中Tomcate Mannager凭据添加</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-服务项目的构建"><span class="toc-text">4. 服务项目的构建</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-jar包发布"><span class="toc-text">4.1 jar包发布</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-SSH配置"><span class="toc-text">4.2 SSH配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-服务编写"><span class="toc-text">4.3 服务编写</span></a></li></ol></li></ol>
+<h3 id="Jenkins的安装"><a href="#Jenkins的安装" class="headerlink" title="Jenkins的安装"></a>Jenkins的安装</h3><p>Jenkins的安装步骤,其实还蛮简单的,网上有不少的教程,现在Jenkins同样提供Docker版的镜像. 网络上有大把的教程.如果不熟悉可以下载来看一下.<br>我之前也写过一篇关于Jenkins Docker版本在CentOS下安装的简单小文章,您也可以作为参考.</p>
+<h3 id="1-项目简单描述"><a href="#1-项目简单描述" class="headerlink" title="1. 项目简单描述"></a>1. 项目简单描述</h3><p>为了说明Jenkins的配置过程,我创建了一个简单的Java项目:<br><img src="/2018/03/07/jenkins/1.png" title="project"></p>
+<ul>
+<li>demo-api 用于多站点演示</li>
+<li>demo-web 用于多站点演示</li>
+<li>demo-svc 用户服务演示</li>
+</ul>
+<p>同时, 我们会在Git上创建两个分支,master,develop,从而演示多分支,多环境构建.</p>
+<h3 id="2-使用pipeline创建多分支任务"><a href="#2-使用pipeline创建多分支任务" class="headerlink" title="2. 使用pipeline创建多分支任务"></a>2. 使用pipeline创建多分支任务</h3><h4 id="2-1-项目创建"><a href="#2-1-项目创建" class="headerlink" title="2.1 项目创建"></a>2.1 项目创建</h4><img src="/2018/03/07/jenkins/2-1.jpg" title="creatnew">
+<p>使用jenkein pipeline 模式,对项目的不同分支进行构建,因此我们在jenkins中选择多分支pipeline类型创建项目.<br><img src="/2018/03/07/jenkins/2-2.jpg" title="creatnew"></p>
+<p>拉取项目源码,我的代码是存放于github上的, 顾可以直接算则github源,如果是公司内建的git服务器,可以选择git.<br>github的插件应该是默认安装的, 如果没有请在插件管理中添加相应的github插件.</p>
+<img src="/2018/03/07/jenkins/0309-1648.jpg" title="source">
+<p>接下来修改Jenkinsfile名称<br><img src="/2018/03/07/jenkins/0309-1649.jpg" title="source"></p>
+<h4 id="2-2-Jenkinsfile"><a href="#2-2-Jenkinsfile" class="headerlink" title="2.2 Jenkinsfile"></a>2.2 Jenkinsfile</h4><p>使用Jenkins Pipeline方式进行项目构建项目,需要熟悉Jenkinsfile的编写方法.<br>可以<a href="https://jenkins.io/doc/" target="_blank" rel="noopener">参考官网</a>给出的教程,进行相关学习.<br>这里贴一下演示使用的源码, 其中的某些地方会在后面进行说明:</p>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">#!groovy</span><br><span class="line"><span class="keyword">def</span> deployToTomcat(localWarPath, warName) &#123;</span><br><span class="line">    <span class="keyword">def</span> server = <span class="string">"192.168.87.76"</span></span><br><span class="line">    <span class="keyword">def</span> result = sh(</span><br><span class="line"><span class="symbol">            script:</span> <span class="string">"curl --upload-file $&#123;localWarPath&#125; 'http://$&#123;TOMCAT_ACCOUNT&#125;@$&#123;server&#125;/manager/text/deploy?update=true&amp;path=/$&#123;warName&#125;'"</span>,</span><br><span class="line"><span class="symbol">            returnStdout:</span> <span class="literal">true</span></span><br><span class="line">    ).trim()</span><br><span class="line">    <span class="keyword">if</span> (result.startsWith(<span class="string">'OK'</span>)) &#123;</span><br><span class="line">        echo result</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        error result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> deployService(localJarPath, remotePath) &#123;</span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc stop'"</span></span><br><span class="line">    sh <span class="string">"scp $&#123;localJarPath&#125; root@localhost76:$&#123;remotePath&#125;"</span></span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc start'"</span></span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc status'"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line">    environment &#123;</span><br><span class="line">        TOMCAT_ACCOUNT = credentials(<span class="string">'tomcat-account-test-env'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">'Build Test'</span>) &#123;</span><br><span class="line">            when &#123;</span><br><span class="line">                branch <span class="string">'develop'</span></span><br><span class="line">            &#125;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="string">'mvn -B clean package -Dspecific -P dev'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">'Deploy Test'</span>) &#123;</span><br><span class="line">            when &#123;</span><br><span class="line">                branch <span class="string">'develop'</span></span><br><span class="line">                expression &#123;</span><br><span class="line">                    currentBuild.result == <span class="literal">null</span> || currentBuild.result == <span class="string">'SUCCESS'</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            parallel &#123;</span><br><span class="line">                stage(<span class="string">'Deploy Test Api'</span>) &#123;</span><br><span class="line">                    steps &#123;</span><br><span class="line">                        deployToTomcat(<span class="string">'demo-api/target/demo-api.war'</span>, <span class="string">'demo-api'</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                stage(<span class="string">'Deploy Test Web'</span>) &#123;</span><br><span class="line">                    steps &#123;</span><br><span class="line">                        deployToTomcat(<span class="string">'demo-web/target/demo-web.war'</span>, <span class="string">'demo-web'</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                stage(<span class="string">'Deploy Test Svc'</span>) &#123;</span><br><span class="line">                    steps &#123;</span><br><span class="line">                        deployService(<span class="string">'demo-svc/target/demo-svc.jar'</span>, <span class="string">'/var/services/demo-svc.jar'</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>git</p>
+<h3 id="3-Web项目的构建"><a href="#3-Web项目的构建" class="headerlink" title="3. Web项目的构建"></a>3. Web项目的构建</h3><h4 id="3-1-Tomcat-Manager配置"><a href="#3-1-Tomcat-Manager配置" class="headerlink" title="3.1 Tomcat Manager配置"></a>3.1 Tomcat Manager配置</h4><h4 id="3-2-Jenkins中Tomcate-Mannager凭据添加"><a href="#3-2-Jenkins中Tomcate-Mannager凭据添加" class="headerlink" title="3.2 Jenkins中Tomcate Mannager凭据添加"></a>3.2 Jenkins中Tomcate Mannager凭据添加</h4><h3 id="4-服务项目的构建"><a href="#4-服务项目的构建" class="headerlink" title="4. 服务项目的构建"></a>4. 服务项目的构建</h3><h4 id="4-1-jar包发布"><a href="#4-1-jar包发布" class="headerlink" title="4.1 jar包发布"></a>4.1 jar包发布</h4><h4 id="4-2-SSH配置"><a href="#4-2-SSH配置" class="headerlink" title="4.2 SSH配置"></a>4.2 SSH配置</h4><h4 id="4-3-服务编写"><a href="#4-3-服务编写" class="headerlink" title="4.3 服务编写"></a>4.3 服务编写</h4>
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/centos/">centos</a> <a class="tag tag--primary tag--small t-link" href="/tags/docker/">docker</a> <a class="tag tag--primary tag--small t-link" href="/tags/java/">java</a> <a class="tag tag--primary tag--small t-link" href="/tags/jenkins/">jenkins</a> <a class="tag tag--primary tag--small t-link" href="/tags/tomcat/">tomcat</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/02/06/Jenkins-With-Docker-Host-On-CentOs7/" data-tooltip="在CentOS7上使用Docker部署Jenkins" aria-label="下一篇: 在CentOS7上使用Docker部署Jenkins">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/03/07/jenkins/" title="分享到 Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="目录">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        由 [Hexo](https://hexo.io/) 强力驱动 | 主题-[tranquilpeak](https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak)
+    </span>
+
+    <span class="copyrights">
+        Copyrights &copy;
+        2018. Post with 💙 by
+            Yoze.
+    </span>
+</footer>
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/02/06/Jenkins-With-Docker-Host-On-CentOs7/" data-tooltip="在CentOS7上使用Docker部署Jenkins" aria-label="下一篇: 在CentOS7上使用Docker部署Jenkins">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/03/07/jenkins/" title="分享到 Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="目录">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <i id="btn-close-shareoptions" class="fa fa-close"></i>
+    <ul class="share-options">
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/03/07/jenkins/">
+                    <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/avator.png" alt="作者的图片"/>
+        
+            <h4 id="about-card-name">Yoze</h4>
+        
+            <div id="about-card-bio"><p>[抖腿患者] [轻度强迫症] [道德败坏] [深井冰] [擅撸码] [喜看剧] [房奴]</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>哒哒哒</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Mars
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-peofhqjkzcghmndknakluequy1y6owxdwpaqyju9ntl9zxnk7rdolb3rjjoj.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'https://xuyoze.github.io/2018/03/07/jenkins/';
+                 
+                    this.page.identifier = '2018/03/07/jenkins/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'yoze';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+
+    </body>
+</html>

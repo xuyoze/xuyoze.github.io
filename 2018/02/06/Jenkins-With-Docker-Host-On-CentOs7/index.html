@@ -11,19 +11,19 @@
     
     
     
-    <meta name="description" content="在CentOS7上使用Docker部署Jenkins 公司使用了Jenkins进行项目构建,为了熟悉整个流程, 我决定自己搭建一个Jenkins环境练练手.  Jenkins是啥Jenkins，之前叫做Hudson，是基于Java开发的一种持续集成工具，用于监控持续重复的工作，包括： 1、持续的软件版本发布/测试项目。 2、监控外部调用执行的工作。">
+    <meta name="description" content="公司使用了Jenkins进行项目构建,为了熟悉整个流程, 我决定自己搭建一个Jenkins环境练练手.  Jenkins是啥Jenkins，之前叫做Hudson，是基于Java开发的一种持续集成工具，用于监控持续重复的工作，包括： 1、持续的软件版本发布/测试项目。 2、监控外部调用执行的工作。">
 <meta name="keywords" content="centos,docker,jenkins">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="在CentOS7上使用Docker部署Jenkins">
 <meta property="og:url" content="https://xuyoze.github.io/2018/02/06/Jenkins-With-Docker-Host-On-CentOs7/index.html">
 <meta property="og:site_name" content="程序员的博客">
-<meta property="og:description" content="在CentOS7上使用Docker部署Jenkins 公司使用了Jenkins进行项目构建,为了熟悉整个流程, 我决定自己搭建一个Jenkins环境练练手.  Jenkins是啥Jenkins，之前叫做Hudson，是基于Java开发的一种持续集成工具，用于监控持续重复的工作，包括： 1、持续的软件版本发布/测试项目。 2、监控外部调用执行的工作。">
+<meta property="og:description" content="公司使用了Jenkins进行项目构建,为了熟悉整个流程, 我决定自己搭建一个Jenkins环境练练手.  Jenkins是啥Jenkins，之前叫做Hudson，是基于Java开发的一种持续集成工具，用于监控持续重复的工作，包括： 1、持续的软件版本发布/测试项目。 2、监控外部调用执行的工作。">
 <meta property="og:locale" content="zh-cn">
 <meta property="og:image" content="https://xuyoze.github.io/2018/02/06/Jenkins-With-Docker-Host-On-CentOs7/3.jpg">
-<meta property="og:updated_time" content="2018-02-06T11:26:30.788Z">
+<meta property="og:updated_time" content="2018-02-06T11:36:52.371Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="在CentOS7上使用Docker部署Jenkins">
-<meta name="twitter:description" content="在CentOS7上使用Docker部署Jenkins 公司使用了Jenkins进行项目构建,为了熟悉整个流程, 我决定自己搭建一个Jenkins环境练练手.  Jenkins是啥Jenkins，之前叫做Hudson，是基于Java开发的一种持续集成工具，用于监控持续重复的工作，包括： 1、持续的软件版本发布/测试项目。 2、监控外部调用执行的工作。">
+<meta name="twitter:description" content="公司使用了Jenkins进行项目构建,为了熟悉整个流程, 我决定自己搭建一个Jenkins环境练练手.  Jenkins是啥Jenkins，之前叫做Hudson，是基于Java开发的一种持续集成工具，用于监控持续重复的工作，包括： 1、持续的软件版本发布/测试项目。 2、监控外部调用执行的工作。">
 <meta name="twitter:image" content="https://xuyoze.github.io/2018/02/06/Jenkins-With-Docker-Host-On-CentOs7/3.jpg">
 <meta name="twitter:creator" content="@yoze">
     
@@ -238,7 +238,7 @@
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <h2 id="在CentOS7上使用Docker部署Jenkins"><a href="#在CentOS7上使用Docker部署Jenkins" class="headerlink" title="在CentOS7上使用Docker部署Jenkins"></a>在CentOS7上使用Docker部署Jenkins</h2><blockquote>
+            <blockquote>
 <p>公司使用了Jenkins进行项目构建,为了熟悉整个流程, 我决定自己搭建一个Jenkins环境练练手.</p>
 </blockquote>
 <h3 id="Jenkins是啥"><a href="#Jenkins是啥" class="headerlink" title="Jenkins是啥"></a>Jenkins是啥</h3><p><a href="http://baike.sogou.com/v51626369.htm?fromTitle=Jenkins" target="_blank" rel="noopener">Jenkins</a>，之前叫做Hudson，是基于Java开发的一种持续集成工具，用于监控持续重复的工作，包括：</p>
@@ -278,7 +278,8 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/03/07/jenkins/" data-tooltip="Jenkins自动构建发布SpringBoot项目" aria-label="上一篇: Jenkins自动构建发布SpringBoot项目">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -345,10 +346,15 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2018. Post with 💙 by Yoze.
+        由 [Hexo](https://hexo.io/) 强力驱动 | 主题-[tranquilpeak](https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak)
+    </span>
+
+    <span class="copyrights">
+        Copyrights &copy;
+        2018. Post with 💙 by
+            Yoze.
     </span>
 </footer>
-
             </div>
             
                 <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
@@ -357,7 +363,8 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/03/07/jenkins/" data-tooltip="Jenkins自动构建发布SpringBoot项目" aria-label="上一篇: Jenkins自动构建发布SpringBoot项目">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
