@@ -11,37 +11,38 @@
     
     
     
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png"},"articleBody":"元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。\n所以在家三天不出屋。。。。\n以上都是借口，其实就是懒，就是宅\n整好在熟悉一把Python的爬虫框架scrapy。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习scray框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.\n\n爬取前准备图虫的相关图片都是按照Tag的方式进行组织的, 所以我们很容易就可以根据标签进行某类图片的爬取。下面是图虫的入口页面图虫入口\n爬去入口每个标签或专题页面采用的是JS动态翻页,我们可以通过WEB工具的网络功能,或者fidder查看对应的请求.获得如下接口请求地址:https://tuchong.com/rest/tags/%E8%87%AA%E7%84%B6/posts?page=1&amp;count=20&amp;type=hot\n可以看到, 有几个可用的参数:\n\ntags\npage\ncount\ntype\n\n由此我们可以得到分页的接口数据如下图所示这个是列表页的基本数据信息\n返回的JSON数据中每个post节点下都有一个images数组,如果数组中有对个值表示,这个是一组套图.因此我们可以根据 images 节点,循环并获取相应的套图。\n原图地址分析由于列表页是缩放后的图片, 所以我们只能手动查看并归纳原图文件的路径规则.也许哪一天规则就变了也说不上但是目前还是可用的。\n规则如下：\n\n缩略图规则 :https://photo.tuchong.com/+ author_id + /g/ + img_id +.jpg  如:https://photo.tuchong.com/1370833/g/20494979.jpgauthor_id 是图片作者的编号,img_id 是图片编号\n\n原图规则 :https://photo.tuchong.com/+ author_id + /f/ + img_id +.jpg  如:https://photo.tuchong.com/1370833/f/20494979.jpgauthor_id 是图片作者的编号,img_id 是图片编号\n\n\n代码编写创建爬虫# 创建项目scrapy startproject TuchongProj# 进入项目cd TuchongProj# 创建爬虫scrapy genspider tuchong tuchong.com\n相关代码编写tuchong.py 演示代码, 代码未实现翻页,只取了一页数据。\nclass TuchongSpider(scrapy.Spider):    name = 'tuchong'    allowed_domains = ['tuchong.com']    # 请求URL构造参数    tag = \"风光\"    types = \"hot\"  # new    order = \"weekly\"    page = \"1\"    count = \"20\"    baseUrl = \"https://tuchong.com/rest/tags/\"    start_urls = [baseUrl + tag + \"/posts?page=\" +                  page + \"&amp;count=\" + count + \"&amp;order=\" + order]    # 暂时未做分页功能(循环page)    def parse(self, response):        posts = json.loads(response.body)['postList']        for post in posts:            images = post['images']            for img in images:                item = TuchongprojItem()                author_id = img['user_id']                img_id = img['img_id']                img_link = \"https://photo.tuchong.com/\" + \\                    str(author_id) + \"/f/\" + str(img_id) + \".jpg\"                item['authorId'] = author_id                item['imageId'] = img_id                item['imageLink'] = img_link                yield item\n我在定义的Item有三个字段， 这里只取了接口JSON数据中的author_id和img_id 按照上面的分析的规则,拼装了图片的大图路径。\nItem定义：class TuchongprojItem(scrapy.Item):    # define the fields for your item here like:    authorId = scrapy.Field()    imageId = scrapy.Field()    imageLink = scrapy.Field()\n接下来就是定义pipeline处理相关数据了class TuchongprojPipeline(ImagesPipeline):    def get_media_requests(self, item, info):        imglink = item['imageLink']        # print(imglink)        yield scrapy.Request(imglink)    def item_completed(self, result, item, info):        # print(result)        # [(True, &#123;'url': 'https://photo.tuchong.com/1660246/f/9281459.jpg', 'path': 'full/e8876e7547c166d58876c3fce547d6819d8bf031.jpg', 'checksum': 'd78e6ba1115ae956878bdc630173ea7a'&#125;)]        # 取出图片存放的地址        author_id = item['authorId']        img_id = item['imageId']        patharr = [x[\"path\"] for ok, x in result if ok]        path = patharr[0]        # 文件重命名(原地址,新地址)        os.rename(images_store + path, images_store + \"full/\" +                  str(author_id) + \"-\" + str(img_id) + \".jpg\")        return item\n由于要处理图片数据,我们使用scrapy提供ImagesPipeline进行图片处理.重写ImagesPipeline里的两个方法:get_media_requests方法, 主要负责发送图片获取请求, 这里我们将我们拼装的图片大图地址传递给Request进行图片处理.\nitem_completed方法, 这里主要用来对下载回来的图片进行重命名处理. 我们的命名规则是 author_id+&#39;-&#39;+img_id, 这样便于我们进行排序 ^_^\n使用ImagesPipeline 我们需要制定图片的存放地址,同时我们需要启用当前pipeline\nsettings.py# Configure item pipelines# See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.htmlITEM_PIPELINES = &#123;    &apos;TuchongProj.pipelines.TuchongprojPipeline&apos;: 300,&#125;# 爬取图片后图片存放的位置IMAGES_STORE = &quot;F:/_tuchong/fengjing/&quot;\n好了, 爬虫差不多了,运行下试试吧!\nscrapy crawl tuchong\n相关问题接口请求不成功或返回的数据为空\nUserAgent问题.自定义UserAgent,在settings.py修改UA\n# Crawl responsibly by identifying yourself (and your website) on the user-agentUSER_AGENT = &apos;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3294.6 Safari/537.36&apos;\n\n请求过快,相应不过来限制并发数,增加延迟时间\n# Configure maximum concurrent requests performed by Scrapy (default: 16)CONCURRENT_REQUESTS = 1# Configure a delay for requests for the same website (default: 0)# See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay# See also autothrottle settings and docsDOWNLOAD_DELAY = 5\n\n\n本机没有图片处理相关库No module named ‘PIL’\n\n安装Pillow库pip install pillow\npillow基本知识\n其他自己写爬虫,纯粹就是玩票。我们自己写爬虫，去爬取别人的数据， 尽量将并发降低，不要给站点造成骚扰。如果可以尽量按照爬虫协议来爬取应允的内容。\n附 图虫的爬虫协议# Robots.txt file from http://www.tuchong.com# All robots will spider the domainUser-agent: YandexBotDisallow: /User-agent: MJ12botDisallow: /User-agent: PurebotDisallow: /User-agent: psbotDisallow: /User-agent: *Disallow: /admin/Disallow: /api/\n\n 相关学习资料\n\nscrapy文档(CN)\n\n\n","dateCreated":"2018-01-01T21:14:58+08:00","dateModified":"2018-01-04T17:05:52+08:00","datePublished":"2018-01-01T21:14:58+08:00","description":"元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。\n所以在家三天不出屋。。。。\n以上都是借口，其实就是懒，就是宅\n整好在熟悉一把Python的爬虫框架scrapy。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习scray框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.","headline":"练习使用scrapy框架抓取图虫图片","image":["32615134.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://xuyoze.github.io/2018/01/01/using-scrapy/"},"publisher":{"@type":"Organization","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png","logo":{"@type":"ImageObject","url":"avator.png"}},"url":"http://xuyoze.github.io/2018/01/01/using-scrapy/","keywords":"python, scrapy","thumbnailUrl":"32615134.jpg"}</script>
     <meta name="description" content="元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。 所以在家三天不出屋。。。。 以上都是借口，其实就是懒，就是宅 整好在熟悉一把Python的爬虫框架scrapy。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习scray框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.">
 <meta name="keywords" content="python,scrapy">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="练习使用scrapy框架抓取图虫图片">
-<meta property="og:url" content="https://xuyoze.github.io/2018/01/01/using-scrapy/index.html">
+<meta property="og:url" content="http://xuyoze.github.io/2018/01/01/using-scrapy/index.html">
 <meta property="og:site_name" content="程序员的博客">
 <meta property="og:description" content="元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。 所以在家三天不出屋。。。。 以上都是借口，其实就是懒，就是宅 整好在熟悉一把Python的爬虫框架scrapy。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习scray框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:image" content="https://xuyoze.github.io/2018/01/01/using-scrapy/01.jpg">
-<meta property="og:image" content="https://xuyoze.github.io/2018/01/01/using-scrapy/02.jpg">
+<meta property="og:image" content="http://xuyoze.github.io/2018/01/01/using-scrapy/01.jpg">
+<meta property="og:image" content="http://xuyoze.github.io/2018/01/01/using-scrapy/02.jpg">
 <meta property="og:updated_time" content="2018-01-04T09:05:52.131Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="练习使用scrapy框架抓取图虫图片">
 <meta name="twitter:description" content="元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。 所以在家三天不出屋。。。。 以上都是借口，其实就是懒，就是宅 整好在熟悉一把Python的爬虫框架scrapy。这篇文章不是教程， 只是我在练习过程中出现的一些问题的记录， 如果你想学习scray框架的话,请移步其他网站文章.或者直接查看scrapy官方文档.">
-<meta name="twitter:image" content="https://xuyoze.github.io/2018/01/01/using-scrapy/01.jpg">
+<meta name="twitter:image" content="http://xuyoze.github.io/2018/01/01/using-scrapy/01.jpg">
 <meta name="twitter:creator" content="@yoze">
     
     
         
     
     
-        <meta property="og:image" content="https://xuyoze.github.io/assets/images/avator.png"/>
+        <meta property="og:image" content="http://xuyoze.github.io/assets/images/avator.png"/>
     
     
-        <meta property="og:image" content="https://xuyoze.github.io/2018/01/01/using-scrapy/32615134.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://xuyoze.github.io/2018/01/01/using-scrapy/32615134.jpg" />
+        <meta property="og:image" content="http://xuyoze.github.io/2018/01/01/using-scrapy/32615134.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://xuyoze.github.io/2018/01/01/using-scrapy/32615134.jpg" />
     
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-pz4cc6y13wt2trzqa8l3n9v0yykr0sstdaheem7qj628nhjmhp9pfawvqawz.min.css">
+    <link rel="stylesheet" href="/assets/css/style-1udptkpril81ozu8ifd8zpujn7ipu7lefxsiu5gxx0dpnzntdx6dusvki3ao.min.css">
     <!--STYLES END-->
     
     <script type="text/javascript">
@@ -209,18 +210,18 @@
                         hasCoverMetaIn
                         ">
                 
-<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+<article class="post">
     
     
         <div class="post-header main-content-wrap text-left">
     
-        <h1 class="post-title" itemprop="headline">
+        <h1 class="post-title">
             练习使用scrapy框架抓取图虫图片
         </h1>
     
     
         <div class="post-meta">
-    <time itemprop="datePublished" datetime="2018-01-01T21:14:58+08:00">
+    <time datetime="2018-01-01T21:14:58+08:00">
 	
 		    1月 01, 2018
     	
@@ -236,8 +237,9 @@
 
     
 </div>
+
     
-    <div class="post-content markdown" itemprop="articleBody">
+    <div class="post-content markdown">
         <div class="main-content-wrap">
             <p>元旦假期，天干物燥，寒风刺骨，不宜外出。黄历上好像是这么说的，嗯， 准没错。</p>
 <p>所以在家三天不出屋。。。。</p>
@@ -335,7 +337,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -343,7 +345,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/01/using-scrapy/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/01/using-scrapy/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -383,13 +385,16 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        由 [Hexo](https://hexo.io/) 强力驱动 | 主题-[tranquilpeak](https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak)
-    </span>
-
-    <span class="copyrights">
-        Copyrights &copy;
+        Powerd by
+        <a href='https://hexo.io/'>Hexo</a>. Theme-
+        <a href="https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak">Tranquilpeak</a>
+       | Copyrights &copy;
         2018. Post with 💙 by
             Yoze.
+    </span>
+    <br/>
+    <span>
+
     </span>
 </footer>
             </div>
@@ -420,7 +425,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -428,7 +433,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/01/using-scrapy/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/01/using-scrapy/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -461,7 +466,7 @@
             
             
             <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/01/using-scrapy/">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/01/using-scrapy/">
                     <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                 </a>
             </li>
@@ -513,13 +518,13 @@
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-peofhqjkzcghmndknakluequy1y6owxdwpaqyju9ntl9zxnk7rdolb3rjjoj.min.js"></script>
+<script src="/assets/js/script-yhuo2grt8r7qkqumzgjoglkfbicl1thukjgmla6jopu56zpcowfedi5zjcor.min.js"></script>
 <!--SCRIPTS END-->
 
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'https://xuyoze.github.io/2018/01/01/using-scrapy/';
+                 this.page.url = 'http://xuyoze.github.io/2018/01/01/using-scrapy/';
                  
                     this.page.identifier = '2018/01/01/using-scrapy/';
                  

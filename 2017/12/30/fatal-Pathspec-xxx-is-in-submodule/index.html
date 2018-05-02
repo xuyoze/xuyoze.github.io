@@ -11,36 +11,37 @@
     
     
     
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png"},"articleBody":"下午在创建git仓库的时候,有一个文件夹出现了异常,导致上传到 github后只有一个空的文件夹.\n而文件夹中无任何文件.\n更换机器后,拉取仓储,重新添加文件后试图将文件添加到git报错.\nfatal: Pathspec &apos;claudia&apos; is in submodule...\n\n\n查找网友解决方法,在此记录如下:\n\nI have a repository on google code with my project.I use Git source control.It seems that when I try to add files to git from a specific directory, I get the following error:fatal: Pathspec ‘autoload_classmap.php’ is in submodule ‘module/CocktailMakerModule’Now I’m not trying to add a submodule. I’m just trying to add a directory to git!The result that I have now is that this directory is committed empty. So when I try to add specific files I get the above error message.I checked and there isn’t any other .git directory in that directory, so I’m really confused to why this has happened.Best How To :Still no idea how it happened. All documentation I read assumes I have a .git directory there but I don’t.I just did the following:git rm -rf –cached CocktailMakerModule/git add CocktailMakerModule/That seems to resolve the issue.\n\n解决方法:\n执行命令从本地仓储删除现有文件夹\ngit rm -rf --cached claudia/\n添加文件后重新添加到本地仓储\ngit add claudia/\n问题解决!\nfatal: Pathspec ‘autoload_classmap.php’ is in submodule ‘module/CocktailMakerModule’\nhowtobuildsoftware.comfatal: Pathspec...\n","dateCreated":"2017-12-30T22:19:49+08:00","dateModified":"2018-01-02T09:09:59+08:00","datePublished":"2017-12-30T22:19:49+08:00","description":"下午在创建git仓库的时候,有一个文件夹出现了异常,导致上传到 github后只有一个空的文件夹.\n而文件夹中无任何文件.\n更换机器后,拉取仓储,重新添加文件后试图将文件添加到git报错.\nfatal: Pathspec &apos;claudia&apos; is in submodule...","headline":"Git 错误 fatal Pathspec xxx is in submodule","image":["git.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/"},"publisher":{"@type":"Organization","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png","logo":{"@type":"ImageObject","url":"avator.png"}},"url":"http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/","keywords":"git","thumbnailUrl":"git.png"}</script>
     <meta name="description" content="下午在创建git仓库的时候,有一个文件夹出现了异常,导致上传到 github后只有一个空的文件夹. 而文件夹中无任何文件. 更换机器后,拉取仓储,重新添加文件后试图将文件添加到git报错. fatal: Pathspec &amp;apos;claudia&amp;apos; is in submodule...">
 <meta name="keywords" content="git">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Git 错误 fatal Pathspec xxx is in submodule">
-<meta property="og:url" content="https://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/index.html">
+<meta property="og:url" content="http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/index.html">
 <meta property="og:site_name" content="程序员的博客">
 <meta property="og:description" content="下午在创建git仓库的时候,有一个文件夹出现了异常,导致上传到 github后只有一个空的文件夹. 而文件夹中无任何文件. 更换机器后,拉取仓储,重新添加文件后试图将文件添加到git报错. fatal: Pathspec &amp;apos;claudia&amp;apos; is in submodule...">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:image" content="https://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/Snipaste_2017-12-29_22-26-11.png">
+<meta property="og:image" content="http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/Snipaste_2017-12-29_22-26-11.png">
 <meta property="og:updated_time" content="2018-01-02T01:09:59.937Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git 错误 fatal Pathspec xxx is in submodule">
 <meta name="twitter:description" content="下午在创建git仓库的时候,有一个文件夹出现了异常,导致上传到 github后只有一个空的文件夹. 而文件夹中无任何文件. 更换机器后,拉取仓储,重新添加文件后试图将文件添加到git报错. fatal: Pathspec &amp;apos;claudia&amp;apos; is in submodule...">
-<meta name="twitter:image" content="https://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/Snipaste_2017-12-29_22-26-11.png">
+<meta name="twitter:image" content="http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/Snipaste_2017-12-29_22-26-11.png">
 <meta name="twitter:creator" content="@yoze">
     
     
         
     
     
-        <meta property="og:image" content="https://xuyoze.github.io/assets/images/avator.png"/>
+        <meta property="og:image" content="http://xuyoze.github.io/assets/images/avator.png"/>
     
     
-        <meta property="og:image" content="https://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/git.png"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/git.png" />
+        <meta property="og:image" content="http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/git.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/git.png" />
     
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-pz4cc6y13wt2trzqa8l3n9v0yykr0sstdaheem7qj628nhjmhp9pfawvqawz.min.css">
+    <link rel="stylesheet" href="/assets/css/style-1udptkpril81ozu8ifd8zpujn7ipu7lefxsiu5gxx0dpnzntdx6dusvki3ao.min.css">
     <!--STYLES END-->
     
     <script type="text/javascript">
@@ -208,18 +209,18 @@
                         hasCoverMetaIn
                         ">
                 
-<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+<article class="post">
     
     
         <div class="post-header main-content-wrap text-left">
     
-        <h1 class="post-title" itemprop="headline">
+        <h1 class="post-title">
             Git 错误 fatal Pathspec xxx is in submodule
         </h1>
     
     
         <div class="post-meta">
-    <time itemprop="datePublished" datetime="2017-12-30T22:19:49+08:00">
+    <time datetime="2017-12-30T22:19:49+08:00">
 	
 		    12月 30, 2017
     	
@@ -235,8 +236,9 @@
 
     
 </div>
+
     
-    <div class="post-content markdown" itemprop="articleBody">
+    <div class="post-content markdown">
         <div class="main-content-wrap">
             <p>下午在创建<code>git</code>仓库的时候,有一个文件夹出现了异常,导致上传到 github后只有一个空的文件夹.</p>
 <p>而文件夹中无任何文件.</p>
@@ -296,7 +298,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -304,7 +306,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -320,7 +322,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -344,13 +346,16 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        由 [Hexo](https://hexo.io/) 强力驱动 | 主题-[tranquilpeak](https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak)
-    </span>
-
-    <span class="copyrights">
-        Copyrights &copy;
+        Powerd by
+        <a href='https://hexo.io/'>Hexo</a>. Theme-
+        <a href="https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak">Tranquilpeak</a>
+       | Copyrights &copy;
         2018. Post with 💙 by
             Yoze.
+    </span>
+    <br/>
+    <span>
+
     </span>
 </footer>
             </div>
@@ -381,7 +386,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -389,7 +394,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -405,7 +410,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -422,7 +427,7 @@
             
             
             <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/">
                     <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                 </a>
             </li>
@@ -474,13 +479,13 @@
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-peofhqjkzcghmndknakluequy1y6owxdwpaqyju9ntl9zxnk7rdolb3rjjoj.min.js"></script>
+<script src="/assets/js/script-yhuo2grt8r7qkqumzgjoglkfbicl1thukjgmla6jopu56zpcowfedi5zjcor.min.js"></script>
 <!--SCRIPTS END-->
 
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'https://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/';
+                 this.page.url = 'http://xuyoze.github.io/2017/12/30/fatal-Pathspec-xxx-is-in-submodule/';
                  
                     this.page.identifier = '2017/12/30/fatal-Pathspec-xxx-is-in-submodule/';
                  

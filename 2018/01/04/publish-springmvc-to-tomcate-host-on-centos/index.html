@@ -11,11 +11,12 @@
     
     
     
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png"},"articleBody":"本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题.\nTomcat 安装官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.\n\n下载安装访问Apache Tomcat官网,\n找到 tar包地址并复制,\n# 切换常用目录cd /usr/local/# 下载指定的tomcat版本wget http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-8/v8.5.24/bin/apache-tomcat-8.5.24.tar.gz&gt;&gt;&gt;# 解压tar包tar -zxvf apache-tomcat-8.0.26.tar.gz# 删除原始包rm -rf apache-tomcat-8.0.26.tar.gz.tar.gz# 重命名mv apache-tomcat-8.0.26 tomcat\n启动# 启动tomcat/usr/local/tomcat/bin/startup.shUsing CATALINA_BASE:  /usr/local/tomcatUsing CATALINA_HOME:  /usr/local/tomcatUsing CATALINA_TMPDIR: /usr/local/tomcat/tempUsing JRE_HOME:        /usr/java/jdk1.8.0_60Using CLASSPATH:      /usr/local/tomcat/bin/bootstrap.jar:/usr/local/tomcat/bin/tomcat-juli.jarTomcat started.\n运行通过以下地址查看tomcat是否运行正常:\nhttp://192.168.11.52:8080/\n看到tomcat系统界面，说明安装成功！\n停止# 停止tomcat/usr/local/tomcat/bin/shutdown.sh\n常见问题JAVA路径不正确Neither the JAVA_HOME nor the JRE_HOME environment variable is definedAt least one of these environment variable is needed to run this program\n则要注意提前设置java路径\n在apache-tomcat-8.0.26/bin/setclasspath.sh中添加一下内容export JAVA_HOME=/usr/java/jdk1.8.0_60  export JRE_HOME=/usr/java/jdk1.8.0_60/jreexport CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATHexport PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH\n防火墙禁止端口防火墙开放8080端口,增加8080端口到防火墙配置中，执行以下操作：\nvi /etc/sysconfig/iptables# 增加以下代码-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 8080 -j ACCEPT\n重启防火墙# service iptables restart\nTomcat 配置—– 未完 —-\n","dateCreated":"2018-01-04T16:05:53+08:00","dateModified":"2018-02-06T19:31:41+08:00","datePublished":"2018-01-04T16:05:53+08:00","description":"本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题.\nTomcat 安装官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.","headline":"发布JAVA SpringMVC站点到Centos7","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/"},"publisher":{"@type":"Organization","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png","logo":{"@type":"ImageObject","url":"avator.png"}},"url":"http://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/","keywords":"centos, java, tomcat, springmvc"}</script>
     <meta name="description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题. Tomcat 安装官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.">
 <meta name="keywords" content="centos,java,tomcat,springmvc">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="发布JAVA SpringMVC站点到Centos7">
-<meta property="og:url" content="https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/index.html">
+<meta property="og:url" content="http://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/index.html">
 <meta property="og:site_name" content="程序员的博客">
 <meta property="og:description" content="本文主要记录发布SpringMVC站点到 CentOS 7 中的tomcat过程中出现的一些问题. Tomcat 安装官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.">
 <meta property="og:locale" content="zh-cn">
@@ -29,13 +30,13 @@
         
     
     
-        <meta property="og:image" content="https://xuyoze.github.io/assets/images/avator.png"/>
+        <meta property="og:image" content="http://xuyoze.github.io/assets/images/avator.png"/>
     
     
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-pz4cc6y13wt2trzqa8l3n9v0yykr0sstdaheem7qj628nhjmhp9pfawvqawz.min.css">
+    <link rel="stylesheet" href="/assets/css/style-1udptkpril81ozu8ifd8zpujn7ipu7lefxsiu5gxx0dpnzntdx6dusvki3ao.min.css">
     <!--STYLES END-->
     
     <script type="text/javascript">
@@ -203,18 +204,18 @@
                         hasCoverMetaIn
                         ">
                 
-<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+<article class="post">
     
     
         <div class="post-header main-content-wrap text-left">
     
-        <h1 class="post-title" itemprop="headline">
+        <h1 class="post-title">
             发布JAVA SpringMVC站点到Centos7
         </h1>
     
     
         <div class="post-meta">
-    <time itemprop="datePublished" datetime="2018-01-04T16:05:53+08:00">
+    <time datetime="2018-01-04T16:05:53+08:00">
 	
 		    1月 04, 2018
     	
@@ -230,8 +231,9 @@
 
     
 </div>
+
     
-    <div class="post-content markdown" itemprop="articleBody">
+    <div class="post-content markdown">
         <div class="main-content-wrap">
             <p>本文主要记录发布<code>SpringMVC</code>站点到 <code>CentOS 7</code> 中的<code>tomcat</code>过程中出现的一些问题.</p>
 <h2 id="Tomcat-安装"><a href="#Tomcat-安装" class="headerlink" title="Tomcat 安装"></a>Tomcat 安装</h2><p>官网线下常用的Tomcat版本, 一般现在生产环境机器采用的版本为8.x, 所以使用8.x进行安装.</p>
@@ -291,7 +293,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -299,7 +301,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -315,7 +317,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -339,13 +341,16 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        由 [Hexo](https://hexo.io/) 强力驱动 | 主题-[tranquilpeak](https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak)
-    </span>
-
-    <span class="copyrights">
-        Copyrights &copy;
+        Powerd by
+        <a href='https://hexo.io/'>Hexo</a>. Theme-
+        <a href="https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak">Tranquilpeak</a>
+       | Copyrights &copy;
         2018. Post with 💙 by
             Yoze.
+    </span>
+    <br/>
+    <span>
+
     </span>
 </footer>
             </div>
@@ -376,7 +381,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -384,7 +389,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -400,7 +405,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -417,7 +422,7 @@
             
             
             <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/">
                     <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                 </a>
             </li>
@@ -469,13 +474,13 @@
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-peofhqjkzcghmndknakluequy1y6owxdwpaqyju9ntl9zxnk7rdolb3rjjoj.min.js"></script>
+<script src="/assets/js/script-yhuo2grt8r7qkqumzgjoglkfbicl1thukjgmla6jopu56zpcowfedi5zjcor.min.js"></script>
 <!--SCRIPTS END-->
 
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'https://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/';
+                 this.page.url = 'http://xuyoze.github.io/2018/01/04/publish-springmvc-to-tomcate-host-on-centos/';
                  
                     this.page.identifier = '2018/01/04/publish-springmvc-to-tomcate-host-on-centos/';
                  

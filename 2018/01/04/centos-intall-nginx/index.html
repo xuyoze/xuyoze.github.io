@@ -11,37 +11,38 @@
     
     
     
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png"},"articleBody":"CentOS 下安装Nginx相关步骤,以及一些常见的错误.\n本篇文章内容为转载内容，原文为博客园博主hafiz,查看原文请移步Centos7安装Nginx实战\n\n\n\n一、背景最近在写一些自己的项目，用到了nginx，所以自己动手来在Centos7上安装nginx,以下是安装步骤。\n二、基本概念以及应用场景1.什么是nginxNginx是一款使用C语言开发的高性能的http 服务器/反向代理服务器及电子邮件（IMAP/POP3）代理服务器。由俄罗斯的程序设计师Igor Sysoev所开发，官方测试nginx能够支支撑5万并发链接，并且cpu、内存等资源消耗却非常低，运行非常稳定。\n2.Nginx的应用场景1)、http服务器。Nginx是一个http服务可以独立提供http服务。可以做网页静态服务器。\n2)、虚拟主机。可以实现在一台服务器虚拟出多个网站。例如个人网站使用的虚拟主机。\n3)、反向代理，负载均衡。当网站的访问量达到一定程度后，单台服务器不能满足用户的请求时，需要用多台服务器集群可以使用nginx做反向代理。并且多台服务器可以平均分担负载，不会因为某台服务器负载高宕机而某台服务器闲置的情况。\n三、安装步骤1.检查并安装所需的依赖软件1).gcc:nginx编译依赖gcc环境yum install gcc-c++\n2).pcre:(Perl Compatible Regular Expressions)是一个Perl库，包括 perl 兼容的正则表达式库。nginx的http模块使用pcre来解析正则表达式.yum install -y pcre pcre-devel\n3).zlib：该库提供了很多种压缩和解压缩的方式，nginx使用zlib对http包的内容进行gzip。yum install -y zlib zlib-devel\n4).openssl:一个强大的安全套接字层密码库，囊括主要的密码算法、常用的密钥和证书封装管理功能及SSL协议，并提供丰富的应用程序供测试或其它目的使用。nginx不仅支持http协议，还支持https（即在ssl协议上传输http）.yum install -y openssl openssl-devel\n2.下载nginx源码包下载命令：wget http://nginx.org/download/nginx-1.12.0.tar.gz\n3.解压缩源码包并进入1).解压缩：tar -zxvf nginx-1.12.0.tar.gz2).进入解压缩后文件夹：cd nginx-1.12.0\n4.配置编译参数(可以使用./configure –help查询详细参数)命令：./configure \\--prefix=/usr/local/nginx \\--pid-path=/var/run/nginx/nginx.pid \\--lock-path=/var/lock/nginx.lock \\--error-log-path=/var/log/nginx/error.log \\--http-log-path=/var/log/nginx/access.log \\--with-http_gzip_static_module \\--http-client-body-temp-path=/var/temp/nginx/client \\--http-proxy-temp-path=/var/temp/nginx/proxy \\--http-fastcgi-temp-path=/var/temp/nginx/fastcgi \\--http-uwsgi-temp-path=/var/temp/nginx/uwsgi \\--http-scgi-temp-path=/var/temp/nginx/scgi\n注：安装之前需要手动创建上面指定的nginx文件夹，即/var/temp、/var/temp/nginx、/var/run/nginx/文件夹，否则启动时报错\n5.编译并安装make &amp;&amp; make install\n可以进入/usr/local/nginx查看文件是否存在conf、sbin、html文件夹，若存在则安装成功\n6.启动nginx1).进入安装目录whereis nginx# /usr/local/nginxcd /usr/local/nginx/sbin/\n2).启动./nginx\n3).若报错：[emerg] open() &quot;/var/run/nginx/nginx.pid&quot; failed (2: No such file or directory)\n需要查看下是不是在/var/run文件夹下不存在nginx文件夹，不存在则新建\n4).查看是否启动：ps -ef | grep nginx\n如果有master和worker两个进程证明启动成功\n注意：执行./nginx启动nginx，这里可以 -c 指定加载的nginx配置文件，如下：./nginx -c /usr/local/nginx/conf/nginx.conf\n如果不指定 -c，nginx在启动时默认加载conf/nginx.conf文件，此文件的地址也可以在编译安装nginx时指定./configure的参数(–conf-path= 指向配置文件（nginx.conf）)\n7.停止1).暴利kill(不推荐使用)kill -9 processId\n2).快速停止cd /usr/local/nginx/sbin &amp;&amp; ./nginx -s stop\n此方式相当于先查出nginx进程id再使用kill命令强制杀掉进程\n3).完整停止(建议使用)cd /usr/local/nginx/sbin &amp;&amp; ./nginx -s quit\n此方式停止步骤是待nginx进程处理任务完毕进行停止\n8.重启及重新加载配置1.先停止再启动（建议使用）./nginx -s quit &amp;&amp; ./nginx\n2.重新加载配置文件./nginx -s reload\n9.测试nginx安装成功，启动nginx,即可通过ip地址来访问nginx:\n问题汇总CentOS 防火墙\nCentOS 7.0默认使用的是firewall作为防火墙，这里改为iptables防火墙步骤。\n\n\n关闭firewall：\nsystemctl stop firewalld.service #停止firewallsystemctl disable firewalld.service #禁止firewall开机启动firewall-cmd --state #查看默认防火墙状态（关闭后显示notrunning，开启后显示running）systemctl restart firewalld.service #重启firewallfirewall-cmd --query-port=80/tcp #查询端口是否开放firewall-cmd --add-port=80/tcp #开启指定端口\n\niptables防火墙（这里iptables已经安装，下面进行配置）\nvi /etc/sysconfig/iptables-config  #编辑防火墙配置文件\n\n\n# sampleconfiguration for iptables service# you can edit thismanually or use system-config-firewall# please do not askus to add additional ports/services to this default configuration*filter:INPUT ACCEPT [0:0]:FORWARD ACCEPT[0:0]:OUTPUT ACCEPT[0:0]-A INPUT -m state--state RELATED,ESTABLISHED -j ACCEPT-A INPUT -p icmp -jACCEPT-A INPUT -i lo -jACCEPT-A INPUT -p tcp -mstate --state NEW -m tcp --dport 22 -j ACCEPT-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -jACCEPT-A INPUT -p tcp -m state --state NEW -m tcp --dport 8080-j ACCEPT-A INPUT -j REJECT--reject-with icmp-host-prohibited-A FORWARD -jREJECT --reject-with icmp-host-prohibitedCOMMIT\n:wq! #保存退出\n备注：这里使用80和8080端口为例。***部分一般添加到“-A INPUT -p tcp -m state –state NEW -m tcp–dport 22 -j ACCEPT”行的上面或者下面，切记不要添加到最后一行，否则防火墙重启后不生效。\n\nsystemctl restart iptables.service #最后重启防火墙使配置生效systemctl enable iptables.service #设置防火墙开机启动","dateCreated":"2018-01-04T12:20:58+08:00","dateModified":"2018-01-04T17:15:35+08:00","datePublished":"2018-01-04T12:20:58+08:00","description":"CentOS 下安装Nginx相关步骤,以及一些常见的错误.\n本篇文章内容为转载内容，原文为博客园博主hafiz,查看原文请移步Centos7安装Nginx实战\n","headline":"CentOS 安装Nginx步骤","image":["nginx.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://xuyoze.github.io/2018/01/04/centos-intall-nginx/"},"publisher":{"@type":"Organization","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png","logo":{"@type":"ImageObject","url":"avator.png"}},"url":"http://xuyoze.github.io/2018/01/04/centos-intall-nginx/","keywords":"centos, nginx","thumbnailUrl":"nginx.png"}</script>
     <meta name="description" content="CentOS 下安装Nginx相关步骤,以及一些常见的错误. 本篇文章内容为转载内容，原文为博客园博主hafiz,查看原文请移步Centos7安装Nginx实战">
 <meta name="keywords" content="centos,nginx">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="CentOS 安装Nginx步骤">
-<meta property="og:url" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/index.html">
+<meta property="og:url" content="http://xuyoze.github.io/2018/01/04/centos-intall-nginx/index.html">
 <meta property="og:site_name" content="程序员的博客">
 <meta property="og:description" content="CentOS 下安装Nginx相关步骤,以及一些常见的错误. 本篇文章内容为转载内容，原文为博客园博主hafiz,查看原文请移步Centos7安装Nginx实战">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:image" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/894443-20170522211619117-1585471045.png">
-<meta property="og:image" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/894443-20170522211459382-336608973.png">
+<meta property="og:image" content="http://xuyoze.github.io/2018/01/04/centos-intall-nginx/894443-20170522211619117-1585471045.png">
+<meta property="og:image" content="http://xuyoze.github.io/2018/01/04/centos-intall-nginx/894443-20170522211459382-336608973.png">
 <meta property="og:updated_time" content="2018-01-04T09:15:35.879Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS 安装Nginx步骤">
 <meta name="twitter:description" content="CentOS 下安装Nginx相关步骤,以及一些常见的错误. 本篇文章内容为转载内容，原文为博客园博主hafiz,查看原文请移步Centos7安装Nginx实战">
-<meta name="twitter:image" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/894443-20170522211619117-1585471045.png">
+<meta name="twitter:image" content="http://xuyoze.github.io/2018/01/04/centos-intall-nginx/894443-20170522211619117-1585471045.png">
 <meta name="twitter:creator" content="@yoze">
     
     
         
     
     
-        <meta property="og:image" content="https://xuyoze.github.io/assets/images/avator.png"/>
+        <meta property="og:image" content="http://xuyoze.github.io/assets/images/avator.png"/>
     
     
-        <meta property="og:image" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/nginx.png"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://xuyoze.github.io/2018/01/04/centos-intall-nginx/nginx.png" />
+        <meta property="og:image" content="http://xuyoze.github.io/2018/01/04/centos-intall-nginx/nginx.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://xuyoze.github.io/2018/01/04/centos-intall-nginx/nginx.png" />
     
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-pz4cc6y13wt2trzqa8l3n9v0yykr0sstdaheem7qj628nhjmhp9pfawvqawz.min.css">
+    <link rel="stylesheet" href="/assets/css/style-1udptkpril81ozu8ifd8zpujn7ipu7lefxsiu5gxx0dpnzntdx6dusvki3ao.min.css">
     <!--STYLES END-->
     
     <script type="text/javascript">
@@ -209,18 +210,18 @@
                         hasCoverMetaIn
                         ">
                 
-<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+<article class="post">
     
     
         <div class="post-header main-content-wrap text-left">
     
-        <h1 class="post-title" itemprop="headline">
+        <h1 class="post-title">
             CentOS 安装Nginx步骤
         </h1>
     
     
         <div class="post-meta">
-    <time itemprop="datePublished" datetime="2018-01-04T12:20:58+08:00">
+    <time datetime="2018-01-04T12:20:58+08:00">
 	
 		    1月 04, 2018
     	
@@ -236,8 +237,9 @@
 
     
 </div>
+
     
-    <div class="post-content markdown" itemprop="articleBody">
+    <div class="post-content markdown">
         <div class="main-content-wrap">
             <p>CentOS 下安装Nginx相关步骤,以及一些常见的错误.</p>
 <div class="alert info"><p>本篇文章内容为转载内容，原文为博客园博主<a href="http://www.cnblogs.com/hafiz/" target="_blank" rel="noopener">hafiz</a>,查看原文请移步<a href="http://www.cnblogs.com/hafiz/p/6891458.html" target="_blank" rel="noopener">Centos7安装Nginx实战</a></p>
@@ -288,7 +290,7 @@
 </ol>
 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># sampleconfiguration for iptables service</span></span><br><span class="line"><span class="comment"># you can edit thismanually or use system-config-firewall</span></span><br><span class="line"><span class="comment"># please do not askus to add additional ports/services to this default configuration</span></span><br><span class="line"><span class="meta">*filter</span></span><br><span class="line"><span class="string">:INPUT</span> <span class="string">ACCEPT</span> <span class="string">[0:0]</span></span><br><span class="line"><span class="string">:FORWARD</span> <span class="string">ACCEPT[0:0]</span></span><br><span class="line"><span class="string">:OUTPUT</span> <span class="string">ACCEPT[0:0]</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-m</span> <span class="string">state--state</span> <span class="string">RELATED,ESTABLISHED</span> <span class="bullet">-j</span> <span class="string">ACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-p</span> <span class="string">icmp</span> <span class="bullet">-jACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-i</span> <span class="string">lo</span> <span class="bullet">-jACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-p</span> <span class="string">tcp</span> <span class="bullet">-mstate</span> <span class="bullet">--state</span> <span class="string">NEW</span> <span class="bullet">-m</span> <span class="string">tcp</span> <span class="bullet">--dport</span> <span class="number">22</span> <span class="bullet">-j</span> <span class="string">ACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-p</span> <span class="string">tcp</span> <span class="bullet">-m</span> <span class="string">state</span> <span class="bullet">--state</span> <span class="string">NEW</span> <span class="bullet">-m</span> <span class="string">tcp</span> <span class="bullet">--dport</span> <span class="number">80</span> <span class="bullet">-jACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-p</span> <span class="string">tcp</span> <span class="bullet">-m</span> <span class="string">state</span> <span class="bullet">--state</span> <span class="string">NEW</span> <span class="bullet">-m</span> <span class="string">tcp</span> <span class="bullet">--dport</span> <span class="number">8080</span><span class="bullet">-j</span> <span class="string">ACCEPT</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">INPUT</span> <span class="bullet">-j</span> <span class="string">REJECT--reject-with</span> <span class="string">icmp-host-prohibited</span></span><br><span class="line"><span class="bullet">-</span><span class="string">A</span> <span class="string">FORWARD</span> <span class="bullet">-jREJECT</span> <span class="bullet">--reject-with</span> <span class="string">icmp-host-prohibited</span></span><br><span class="line"><span class="string">COMMIT</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">:wq! <span class="comment">#保存退出</span></span><br></pre></td></tr></table></figure>
-<div class="alert warning"><p>备注：这里使用80和8080端口为例。<em>*</em>部分一般添加到“-A INPUT -p tcp -m state –state NEW -m tcp–dport 22 -j ACCEPT”行的上面或者下面，切记不要添加到最后一行，否则防火墙重启后不生效。</p>
+<div class="alert warning"><p>备注：这里使用80和8080端口为例。***部分一般添加到“-A INPUT -p tcp -m state –state NEW -m tcp–dport 22 -j ACCEPT”行的上面或者下面，切记不要添加到最后一行，否则防火墙重启后不生效。</p>
 </div>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart iptables.service <span class="comment">#最后重启防火墙使配置生效</span></span><br><span class="line">systemctl <span class="built_in">enable</span> iptables.service <span class="comment">#设置防火墙开机启动</span></span><br></pre></td></tr></table></figure>
             
@@ -330,7 +332,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -338,7 +340,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/centos-intall-nginx/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/04/centos-intall-nginx/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -378,13 +380,16 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        由 [Hexo](https://hexo.io/) 强力驱动 | 主题-[tranquilpeak](https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak)
-    </span>
-
-    <span class="copyrights">
-        Copyrights &copy;
+        Powerd by
+        <a href='https://hexo.io/'>Hexo</a>. Theme-
+        <a href="https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak">Tranquilpeak</a>
+       | Copyrights &copy;
         2018. Post with 💙 by
             Yoze.
+    </span>
+    <br/>
+    <span>
+
     </span>
 </footer>
             </div>
@@ -415,7 +420,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -423,7 +428,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/centos-intall-nginx/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/04/centos-intall-nginx/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -456,7 +461,7 @@
             
             
             <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/01/04/centos-intall-nginx/">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/01/04/centos-intall-nginx/">
                     <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                 </a>
             </li>
@@ -508,13 +513,13 @@
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-peofhqjkzcghmndknakluequy1y6owxdwpaqyju9ntl9zxnk7rdolb3rjjoj.min.js"></script>
+<script src="/assets/js/script-yhuo2grt8r7qkqumzgjoglkfbicl1thukjgmla6jopu56zpcowfedi5zjcor.min.js"></script>
 <!--SCRIPTS END-->
 
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'https://xuyoze.github.io/2018/01/04/centos-intall-nginx/';
+                 this.page.url = 'http://xuyoze.github.io/2018/01/04/centos-intall-nginx/';
                  
                     this.page.identifier = '2018/01/04/centos-intall-nginx/';
                  

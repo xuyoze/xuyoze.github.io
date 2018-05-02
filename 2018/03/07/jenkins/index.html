@@ -11,40 +11,41 @@
     
     
     
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png"},"articleBody":"手头在做的java项目,希望通过Jenkins进行构建并发布到测试环境机器,从而避免手动发布的繁琐步骤.\n由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!\n\n\nJenkins的安装Jenkins的安装步骤,其实还蛮简单的,网上有不少的教程,现在Jenkins同样提供Docker版的镜像. 网络上有大把的教程.如果不熟悉可以下载来看一下.我之前也写过一篇关于Jenkins Docker版本在CentOS下安装的简单小文章,您也可以作为参考.\n1. 项目简单描述为了说明Jenkins的配置过程,我创建了一个简单的Java项目:\n\ndemo-api 用于多站点演示\ndemo-web 用于多站点演示\ndemo-svc 用户服务演示\n\n同时, 我们会在Git上创建两个分支,master,develop,从而演示多分支,多环境构建.\n2. 使用pipeline创建多分支任务2.1 项目创建\n使用jenkein pipeline 模式,对项目的不同分支进行构建,因此我们在jenkins中选择多分支pipeline类型创建项目.\n拉取项目源码,我的代码是存放于github上的, 顾可以直接算则github源,如果是公司内建的git服务器,可以选择git.github的插件应该是默认安装的, 如果没有请在插件管理中添加相应的github插件.\n\n接下来修改Jenkinsfile名称\n2.2 Jenkinsfile使用Jenkins Pipeline方式进行项目构建项目,需要熟悉Jenkinsfile的编写方法.可以参考官网给出的教程,进行相关学习.这里贴一下演示使用的源码, 其中的某些地方会在后面进行说明:\n#!groovydef deployToTomcat(localWarPath, warName) &#123;    def server = \"192.168.0.76\"    def result = sh(            script: \"curl --upload-file $&#123;localWarPath&#125; 'http://$&#123;TOMCAT_ACCOUNT&#125;@$&#123;server&#125;/manager/text/deploy?update=true&amp;path=/$&#123;warName&#125;'\",            returnStdout: true    ).trim()    if (result.startsWith('OK')) &#123;        echo result    &#125; else &#123;        error result    &#125;&#125;def deployService(localJarPath, remotePath) &#123;    sh \"ssh 'root@localhost76' 'service demo-svc stop'\"    sh \"scp $&#123;localJarPath&#125; root@localhost76:$&#123;remotePath&#125;\"    sh \"ssh 'root@localhost76' 'service demo-svc start'\"    sh \"ssh 'root@localhost76' 'service demo-svc status'\"&#125;pipeline &#123;    agent any    environment &#123;        TOMCAT_ACCOUNT = credentials('tomcat-account-test-env')    &#125;    stages &#123;        stage('Build Test') &#123;            when &#123;                branch 'develop'            &#125;            steps &#123;                sh 'mvn -B clean package -Dspecific -P dev'            &#125;        &#125;        stage('Deploy Test') &#123;            when &#123;                branch 'develop'                expression &#123;                    currentBuild.result == null || currentBuild.result == 'SUCCESS'                &#125;            &#125;            parallel &#123;                stage('Deploy Test Api') &#123;                    steps &#123;                        deployToTomcat('demo-api/target/demo-api.war', 'demo-api')                    &#125;                &#125;                stage('Deploy Test Web') &#123;                    steps &#123;                        deployToTomcat('demo-web/target/demo-web.war', 'demo-web')                    &#125;                &#125;                stage('Deploy Test Svc') &#123;                    steps &#123;                        deployService('demo-svc/target/demo-svc.jar', '/var/services/demo-svc.jar')                    &#125;                &#125;            &#125;        &#125;    &#125;&#125;\n3. Tomcat Manager配置在Tomcat中开启Manager要经过来两个步骤处理.\n1. 授权\n修改Tomcat管理站点中的相关配置# 转到manager站点所在目录cd /usr/local/tomcat/webapps/manager/META-INFvim context.xml\n修改配置文件content.xml&lt;Context antiResourceLocking=\"false\" privileged=\"true\" &gt;    &lt;Valve className=\"org.apache.catalina.valves.RemoteAddrValve\"         allow=\"127\\.\\d+\\.\\d+\\.\\d+|::1|0:0:0:0:0:0:0:1\" /&gt;    &lt;Manager sessionAttributeValueClassNameFilter=\"java\\.lang\\.(?:Boolean|Integer|Long|Number|String)|org\\.apache\\.catalina\\.filters\\.CsrfPreventionFilter\\$LruCache(?:\\$1)?|java\\.util\\.(?:Linked)?HashMap\"/&gt;&lt;/Context&gt;\nValue节点的allow属性中添加对应的Jenkins服务器IP地址.\n如果是测试环境,则可以直接注释掉 Value 和 Manager 两个节点.\n正式环境,可别这么干~~\n2. 添加用户\n修改tomcat的tomcat-user.xmlcd /usr/local/tomcat/conf/vim tomcat-users.xml\n在最后添加相应的访问用户:&lt;role rolename=\"manager-gui\"/&gt;&lt;role rolename=\"manager-script\"/&gt;&lt;role rolename=\"admin-gui\"/&gt;&lt;role rolename=\"admin-script\"/&gt;&lt;role rolename=\"tomcat-gui\"/&gt;&lt;user username=\"tomcat\" password=\"tomcat\" roles=\"manager-script,admin-script,admin-gui,tomcat,manager-gui\"/&gt;\n指定用户名 username 以及密码 password\n已定义的角色可以查看tomcat官方文档,查看具体作用.\n3. 在Jenkins中添加TomcatManager凭据这里我在jenkens上添加名称为tomcat-account-test-env的manager访问凭据,上面的Jenkinsfiles用到该凭据.\n4. 服务项目的构建如果web站点项目打包为War包的方式,则可以通过TomcatManager进行部署.\n如果是springboot项目并打包为jar包进行部署,接下来会描述相关设置\n4.1 jar包发布对于jar包的发布,可以使用ssh拷贝的方式.\n如下定义了一个方法执行发布的各个步骤:def deployService(localJarPath, remotePath) &#123;    sh \"ssh 'root@localhost76' 'service demo-svc stop'\"    sh \"scp $&#123;localJarPath&#125; root@localhost76:$&#123;remotePath&#125;\"    sh \"ssh 'root@localhost76' 'service demo-svc start'\"    sh \"ssh 'root@localhost76' 'service demo-svc status'\"&#125;\n两台机器之间通过SSH互信方式进行通信,SSH的原理以及其他应用可参考 SSH原理与运用\n4.3 服务编写在Centos7.+ 版本中,可以通过编写shell脚本的方式将jar包做成服务.\n以demo-svc.jar部署为例,编写相应的shell脚本\n\n启动脚本demo-svc-start\n#!/bin/shexport JAVA_HOME=/opt/javaexport PATH=$JAVA_HOME/bin:$PATH # 指定JDK的目录java -jar /var/services/demo-svc/demo-svc.jar &gt; /var/services/demo-svc/logs/demo-svc.log &amp;echo $! &gt; /var/run/demo-svc.pid\n\n停止脚本demo-svc-stop\n#!/bin/shPID=$(cat /var/run/demo-svc.pid)kill -9 $PID\n\n创建服务robot-svc.service\n###CentOS 7.x ##[Unit]Description=service for demoAfter=syslog.target network.target remote-fs.target nss-lookup.target[Service]Type=forkingExecStart=/var/services/demo-svc/demo-svc-startExecStop= /var/services/demo-svc/demo-svc-stopPrivateTmp=true[Install]WantedBy=multi-user.target\n\n部署服务\n\n\n将robot-svc.service拷贝到/usr/lib/systemd/system\n执行命令启动服务,添加服务到开机启动systemctl enable robot-svc #开机自启动systemctl start robot-svc #启动systemctl stop robot-svc #停止\n(完)\n","dateCreated":"2018-03-07T17:15:36+08:00","dateModified":"2018-05-02T15:31:24+08:00","datePublished":"2018-03-07T17:15:36+08:00","description":"手头在做的java项目,希望通过Jenkins进行构建并发布到测试环境机器,从而避免手动发布的繁琐步骤.\n由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!","headline":"Jenkins自动构建发布SpringBoot项目","image":["jenkins.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://xuyoze.github.io/2018/03/07/jenkins/"},"publisher":{"@type":"Organization","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png","logo":{"@type":"ImageObject","url":"avator.png"}},"url":"http://xuyoze.github.io/2018/03/07/jenkins/","keywords":"centos, docker, jenkins, java, tomcat","thumbnailUrl":"jenkins.png"}</script>
     <meta name="description" content="手头在做的java项目,希望通过Jenkins进行构建并发布到测试环境机器,从而避免手动发布的繁琐步骤. 由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!">
 <meta name="keywords" content="centos,docker,jenkins,java,tomcat">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Jenkins自动构建发布SpringBoot项目">
-<meta property="og:url" content="https://xuyoze.github.io/2018/03/07/jenkins/index.html">
+<meta property="og:url" content="http://xuyoze.github.io/2018/03/07/jenkins/index.html">
 <meta property="og:site_name" content="程序员的博客">
 <meta property="og:description" content="手头在做的java项目,希望通过Jenkins进行构建并发布到测试环境机器,从而避免手动发布的繁琐步骤. 由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/1.png">
-<meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/2-1.jpg">
-<meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/2-2.jpg">
-<meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/0309-1648.jpg">
-<meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/0309-1649.jpg">
-<meta property="og:updated_time" content="2018-03-09T09:16:06.248Z">
+<meta property="og:image" content="http://xuyoze.github.io/2018/03/07/jenkins/1.png">
+<meta property="og:image" content="http://xuyoze.github.io/2018/03/07/jenkins/2-1.jpg">
+<meta property="og:image" content="http://xuyoze.github.io/2018/03/07/jenkins/2-2.jpg">
+<meta property="og:image" content="http://xuyoze.github.io/2018/03/07/jenkins/0309-1648.jpg">
+<meta property="og:image" content="http://xuyoze.github.io/2018/03/07/jenkins/0309-1649.jpg">
+<meta property="og:updated_time" content="2018-05-02T07:31:24.129Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Jenkins自动构建发布SpringBoot项目">
 <meta name="twitter:description" content="手头在做的java项目,希望通过Jenkins进行构建并发布到测试环境机器,从而避免手动发布的繁琐步骤. 由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!">
-<meta name="twitter:image" content="https://xuyoze.github.io/2018/03/07/jenkins/1.png">
+<meta name="twitter:image" content="http://xuyoze.github.io/2018/03/07/jenkins/1.png">
 <meta name="twitter:creator" content="@yoze">
     
     
         
     
     
-        <meta property="og:image" content="https://xuyoze.github.io/assets/images/avator.png"/>
+        <meta property="og:image" content="http://xuyoze.github.io/assets/images/avator.png"/>
     
     
-        <meta property="og:image" content="https://xuyoze.github.io/2018/03/07/jenkins/jenkins.png"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://xuyoze.github.io/2018/03/07/jenkins/jenkins.png" />
+        <meta property="og:image" content="http://xuyoze.github.io/2018/03/07/jenkins/jenkins.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://xuyoze.github.io/2018/03/07/jenkins/jenkins.png" />
     
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-pz4cc6y13wt2trzqa8l3n9v0yykr0sstdaheem7qj628nhjmhp9pfawvqawz.min.css">
+    <link rel="stylesheet" href="/assets/css/style-1udptkpril81ozu8ifd8zpujn7ipu7lefxsiu5gxx0dpnzntdx6dusvki3ao.min.css">
     <!--STYLES END-->
     
     <script type="text/javascript">
@@ -212,18 +213,18 @@
                         hasCoverMetaIn
                         ">
                 
-<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+<article class="post">
     
     
         <div class="post-header main-content-wrap text-left">
     
-        <h1 class="post-title" itemprop="headline">
+        <h1 class="post-title">
             Jenkins自动构建发布SpringBoot项目
         </h1>
     
     
         <div class="post-meta">
-    <time itemprop="datePublished" datetime="2018-03-07T17:15:36+08:00">
+    <time datetime="2018-03-07T17:15:36+08:00">
 	
 		    3月 07, 2018
     	
@@ -239,13 +240,14 @@
 
     
 </div>
+
     
-    <div class="post-content markdown" itemprop="articleBody">
+    <div class="post-content markdown">
         <div class="main-content-wrap">
             <p>手头在做的java项目,希望通过Jenkins进行构建并发布到测试环境机器,从而避免手动发布的繁琐步骤.</p>
 <p>由于自己从前没有部署,配置过jenkins发布项目,使用过程中遇到了不少问题,再次记录下备忘!</p>
 <a id="more"></a>
-<h1 id="table-of-contents">目录</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Jenkins的安装"><span class="toc-text">Jenkins的安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-项目简单描述"><span class="toc-text">1. 项目简单描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-使用pipeline创建多分支任务"><span class="toc-text">2. 使用pipeline创建多分支任务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-项目创建"><span class="toc-text">2.1 项目创建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-Jenkinsfile"><span class="toc-text">2.2 Jenkinsfile</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Web项目的构建"><span class="toc-text">3. Web项目的构建</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-Tomcat-Manager配置"><span class="toc-text">3.1 Tomcat Manager配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-Jenkins中Tomcate-Mannager凭据添加"><span class="toc-text">3.2 Jenkins中Tomcate Mannager凭据添加</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-服务项目的构建"><span class="toc-text">4. 服务项目的构建</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-jar包发布"><span class="toc-text">4.1 jar包发布</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-SSH配置"><span class="toc-text">4.2 SSH配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-服务编写"><span class="toc-text">4.3 服务编写</span></a></li></ol></li></ol>
+<h1 id="table-of-contents">目录</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Jenkins的安装"><span class="toc-text">Jenkins的安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-项目简单描述"><span class="toc-text">1. 项目简单描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-使用pipeline创建多分支任务"><span class="toc-text">2. 使用pipeline创建多分支任务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-项目创建"><span class="toc-text">2.1 项目创建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-Jenkinsfile"><span class="toc-text">2.2 Jenkinsfile</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Tomcat-Manager配置"><span class="toc-text">3. Tomcat Manager配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-服务项目的构建"><span class="toc-text">4. 服务项目的构建</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-jar包发布"><span class="toc-text">4.1 jar包发布</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-服务编写"><span class="toc-text">4.3 服务编写</span></a></li></ol></li></ol>
 <h3 id="Jenkins的安装"><a href="#Jenkins的安装" class="headerlink" title="Jenkins的安装"></a>Jenkins的安装</h3><p>Jenkins的安装步骤,其实还蛮简单的,网上有不少的教程,现在Jenkins同样提供Docker版的镜像. 网络上有大把的教程.如果不熟悉可以下载来看一下.<br>我之前也写过一篇关于Jenkins Docker版本在CentOS下安装的简单小文章,您也可以作为参考.</p>
 <h3 id="1-项目简单描述"><a href="#1-项目简单描述" class="headerlink" title="1. 项目简单描述"></a>1. 项目简单描述</h3><p>为了说明Jenkins的配置过程,我创建了一个简单的Java项目:<br><img src="/2018/03/07/jenkins/1.png" title="project"></p>
 <ul>
@@ -260,9 +262,44 @@
 <img src="/2018/03/07/jenkins/0309-1648.jpg" title="source">
 <p>接下来修改Jenkinsfile名称<br><img src="/2018/03/07/jenkins/0309-1649.jpg" title="source"></p>
 <h4 id="2-2-Jenkinsfile"><a href="#2-2-Jenkinsfile" class="headerlink" title="2.2 Jenkinsfile"></a>2.2 Jenkinsfile</h4><p>使用Jenkins Pipeline方式进行项目构建项目,需要熟悉Jenkinsfile的编写方法.<br>可以<a href="https://jenkins.io/doc/" target="_blank" rel="noopener">参考官网</a>给出的教程,进行相关学习.<br>这里贴一下演示使用的源码, 其中的某些地方会在后面进行说明:</p>
-<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">#!groovy</span><br><span class="line"><span class="keyword">def</span> deployToTomcat(localWarPath, warName) &#123;</span><br><span class="line">    <span class="keyword">def</span> server = <span class="string">"192.168.87.76"</span></span><br><span class="line">    <span class="keyword">def</span> result = sh(</span><br><span class="line"><span class="symbol">            script:</span> <span class="string">"curl --upload-file $&#123;localWarPath&#125; 'http://$&#123;TOMCAT_ACCOUNT&#125;@$&#123;server&#125;/manager/text/deploy?update=true&amp;path=/$&#123;warName&#125;'"</span>,</span><br><span class="line"><span class="symbol">            returnStdout:</span> <span class="literal">true</span></span><br><span class="line">    ).trim()</span><br><span class="line">    <span class="keyword">if</span> (result.startsWith(<span class="string">'OK'</span>)) &#123;</span><br><span class="line">        echo result</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        error result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> deployService(localJarPath, remotePath) &#123;</span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc stop'"</span></span><br><span class="line">    sh <span class="string">"scp $&#123;localJarPath&#125; root@localhost76:$&#123;remotePath&#125;"</span></span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc start'"</span></span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc status'"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line">    environment &#123;</span><br><span class="line">        TOMCAT_ACCOUNT = credentials(<span class="string">'tomcat-account-test-env'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">'Build Test'</span>) &#123;</span><br><span class="line">            when &#123;</span><br><span class="line">                branch <span class="string">'develop'</span></span><br><span class="line">            &#125;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="string">'mvn -B clean package -Dspecific -P dev'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">'Deploy Test'</span>) &#123;</span><br><span class="line">            when &#123;</span><br><span class="line">                branch <span class="string">'develop'</span></span><br><span class="line">                expression &#123;</span><br><span class="line">                    currentBuild.result == <span class="literal">null</span> || currentBuild.result == <span class="string">'SUCCESS'</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            parallel &#123;</span><br><span class="line">                stage(<span class="string">'Deploy Test Api'</span>) &#123;</span><br><span class="line">                    steps &#123;</span><br><span class="line">                        deployToTomcat(<span class="string">'demo-api/target/demo-api.war'</span>, <span class="string">'demo-api'</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                stage(<span class="string">'Deploy Test Web'</span>) &#123;</span><br><span class="line">                    steps &#123;</span><br><span class="line">                        deployToTomcat(<span class="string">'demo-web/target/demo-web.war'</span>, <span class="string">'demo-web'</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                stage(<span class="string">'Deploy Test Svc'</span>) &#123;</span><br><span class="line">                    steps &#123;</span><br><span class="line">                        deployService(<span class="string">'demo-svc/target/demo-svc.jar'</span>, <span class="string">'/var/services/demo-svc.jar'</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>git</p>
-<h3 id="3-Web项目的构建"><a href="#3-Web项目的构建" class="headerlink" title="3. Web项目的构建"></a>3. Web项目的构建</h3><h4 id="3-1-Tomcat-Manager配置"><a href="#3-1-Tomcat-Manager配置" class="headerlink" title="3.1 Tomcat Manager配置"></a>3.1 Tomcat Manager配置</h4><h4 id="3-2-Jenkins中Tomcate-Mannager凭据添加"><a href="#3-2-Jenkins中Tomcate-Mannager凭据添加" class="headerlink" title="3.2 Jenkins中Tomcate Mannager凭据添加"></a>3.2 Jenkins中Tomcate Mannager凭据添加</h4><h3 id="4-服务项目的构建"><a href="#4-服务项目的构建" class="headerlink" title="4. 服务项目的构建"></a>4. 服务项目的构建</h3><h4 id="4-1-jar包发布"><a href="#4-1-jar包发布" class="headerlink" title="4.1 jar包发布"></a>4.1 jar包发布</h4><h4 id="4-2-SSH配置"><a href="#4-2-SSH配置" class="headerlink" title="4.2 SSH配置"></a>4.2 SSH配置</h4><h4 id="4-3-服务编写"><a href="#4-3-服务编写" class="headerlink" title="4.3 服务编写"></a>4.3 服务编写</h4>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">#!groovy</span><br><span class="line"><span class="keyword">def</span> deployToTomcat(localWarPath, warName) &#123;</span><br><span class="line">    <span class="keyword">def</span> server = <span class="string">"192.168.0.76"</span></span><br><span class="line">    <span class="keyword">def</span> result = sh(</span><br><span class="line"><span class="symbol">            script:</span> <span class="string">"curl --upload-file $&#123;localWarPath&#125; 'http://$&#123;TOMCAT_ACCOUNT&#125;@$&#123;server&#125;/manager/text/deploy?update=true&amp;path=/$&#123;warName&#125;'"</span>,</span><br><span class="line"><span class="symbol">            returnStdout:</span> <span class="literal">true</span></span><br><span class="line">    ).trim()</span><br><span class="line">    <span class="keyword">if</span> (result.startsWith(<span class="string">'OK'</span>)) &#123;</span><br><span class="line">        echo result</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        error result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> deployService(localJarPath, remotePath) &#123;</span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc stop'"</span></span><br><span class="line">    sh <span class="string">"scp $&#123;localJarPath&#125; root@localhost76:$&#123;remotePath&#125;"</span></span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc start'"</span></span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc status'"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line">    environment &#123;</span><br><span class="line">        TOMCAT_ACCOUNT = credentials(<span class="string">'tomcat-account-test-env'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">'Build Test'</span>) &#123;</span><br><span class="line">            when &#123;</span><br><span class="line">                branch <span class="string">'develop'</span></span><br><span class="line">            &#125;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="string">'mvn -B clean package -Dspecific -P dev'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">'Deploy Test'</span>) &#123;</span><br><span class="line">            when &#123;</span><br><span class="line">                branch <span class="string">'develop'</span></span><br><span class="line">                expression &#123;</span><br><span class="line">                    currentBuild.result == <span class="literal">null</span> || currentBuild.result == <span class="string">'SUCCESS'</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            parallel &#123;</span><br><span class="line">                stage(<span class="string">'Deploy Test Api'</span>) &#123;</span><br><span class="line">                    steps &#123;</span><br><span class="line">                        deployToTomcat(<span class="string">'demo-api/target/demo-api.war'</span>, <span class="string">'demo-api'</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                stage(<span class="string">'Deploy Test Web'</span>) &#123;</span><br><span class="line">                    steps &#123;</span><br><span class="line">                        deployToTomcat(<span class="string">'demo-web/target/demo-web.war'</span>, <span class="string">'demo-web'</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                stage(<span class="string">'Deploy Test Svc'</span>) &#123;</span><br><span class="line">                    steps &#123;</span><br><span class="line">                        deployService(<span class="string">'demo-svc/target/demo-svc.jar'</span>, <span class="string">'/var/services/demo-svc.jar'</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-Tomcat-Manager配置"><a href="#3-Tomcat-Manager配置" class="headerlink" title="3. Tomcat Manager配置"></a>3. Tomcat Manager配置</h3><p>在Tomcat中开启Manager要经过来两个步骤处理.</p>
+<p><strong>1. 授权</strong></p>
+<p>修改Tomcat管理站点中的相关配置<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span> 转到manager站点所在目录</span><br><span class="line">cd /usr/local/tomcat/webapps/manager/META-INF</span><br><span class="line">vim context.xml</span><br></pre></td></tr></table></figure></p>
+<p>修改配置文件<code>content.xml</code><br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Context</span> <span class="attr">antiResourceLocking</span>=<span class="string">"false"</span> <span class="attr">privileged</span>=<span class="string">"true"</span> &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Valve</span> <span class="attr">className</span>=<span class="string">"org.apache.catalina.valves.RemoteAddrValve"</span></span></span><br><span class="line"><span class="tag">         <span class="attr">allow</span>=<span class="string">"127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Manager</span> <span class="attr">sessionAttributeValueClassNameFilter</span>=<span class="string">"java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Context</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p><code>Value</code>节点的<code>allow</code>属性中添加对应的Jenkins服务器IP地址.</p>
+<p>如果是测试环境,则可以直接注释掉 <code>Value</code> 和 <code>Manager</code> 两个节点.</p>
+<p>正式环境,可别这么干~~</p>
+<p><strong>2. 添加用户</strong></p>
+<p>修改tomcat的<code>tomcat-user.xml</code><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/tomcat/conf/</span><br><span class="line">vim tomcat-users.xml</span><br></pre></td></tr></table></figure></p>
+<p>在最后添加相应的访问用户:<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"manager-gui"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"manager-script"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"admin-gui"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"admin-script"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"tomcat-gui"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span> <span class="attr">username</span>=<span class="string">"tomcat"</span> <span class="attr">password</span>=<span class="string">"tomcat"</span> <span class="attr">roles</span>=<span class="string">"manager-script,admin-script,admin-gui,tomcat,manager-gui"</span>/&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>指定用户名 username 以及密码 password</p>
+<p>已定义的角色可以查看tomcat官方文档,查看具体作用.</p>
+<p><strong>3. 在Jenkins中添加TomcatManager凭据</strong><br>这里我在jenkens上添加名称为<code>tomcat-account-test-env</code>的manager访问凭据,上面的Jenkinsfiles用到该凭据.</p>
+<h3 id="4-服务项目的构建"><a href="#4-服务项目的构建" class="headerlink" title="4. 服务项目的构建"></a>4. 服务项目的构建</h3><p>如果web站点项目打包为War包的方式,则可以通过TomcatManager进行部署.</p>
+<p>如果是springboot项目并打包为jar包进行部署,接下来会描述相关设置</p>
+<h4 id="4-1-jar包发布"><a href="#4-1-jar包发布" class="headerlink" title="4.1 jar包发布"></a>4.1 jar包发布</h4><p>对于jar包的发布,可以使用ssh拷贝的方式.</p>
+<p>如下定义了一个方法执行发布的各个步骤:<br><figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> deployService(localJarPath, remotePath) &#123;</span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc stop'"</span></span><br><span class="line">    sh <span class="string">"scp $&#123;localJarPath&#125; root@localhost76:$&#123;remotePath&#125;"</span></span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc start'"</span></span><br><span class="line">    sh <span class="string">"ssh 'root@localhost76' 'service demo-svc status'"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>两台机器之间通过SSH互信方式进行通信,SSH的原理以及其他应用可参考 <a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">SSH原理与运用</a></p>
+<h4 id="4-3-服务编写"><a href="#4-3-服务编写" class="headerlink" title="4.3 服务编写"></a>4.3 服务编写</h4><p>在Centos7.+ 版本中,可以通过编写shell脚本的方式将jar包做成服务.</p>
+<p>以<code>demo-svc.jar</code>部署为例,编写相应的shell脚本</p>
+<ol>
+<li><p>启动脚本<code>demo-svc-start</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/java</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span> <span class="comment"># 指定JDK的目录</span></span><br><span class="line">java -jar /var/services/demo-svc/demo-svc.jar &gt; /var/services/demo-svc/logs/demo-svc.log &amp;</span><br><span class="line"><span class="built_in">echo</span> $! &gt; /var/run/demo-svc.pid</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>停止脚本<code>demo-svc-stop</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">PID=$(cat /var/run/demo-svc.pid)</span><br><span class="line"><span class="built_in">kill</span> -9 <span class="variable">$PID</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建服务<code>robot-svc.service</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">###CentOS 7.x ##</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=service <span class="keyword">for</span> demo</span><br><span class="line">After=syslog.target network.target remote-fs.target nss-lookup.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/var/services/demo-svc/demo-svc-start</span><br><span class="line">ExecStop= /var/services/demo-svc/demo-svc-stop</span><br><span class="line">PrivateTmp=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>部署服务</p>
+</li>
+</ol>
+<p>将<code>robot-svc.service</code>拷贝到<code>/usr/lib/systemd/system</code></p>
+<p>执行命令启动服务,添加服务到开机启动<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> robot-svc <span class="comment">#开机自启动</span></span><br><span class="line">systemctl start robot-svc <span class="comment">#启动</span></span><br><span class="line">systemctl stop robot-svc <span class="comment">#停止</span></span><br></pre></td></tr></table></figure></p>
+<p>(完)</p>
+
             
 
         </div>
@@ -301,7 +338,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -309,7 +346,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/03/07/jenkins/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/03/07/jenkins/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -349,13 +386,16 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        由 [Hexo](https://hexo.io/) 强力驱动 | 主题-[tranquilpeak](https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak)
-    </span>
-
-    <span class="copyrights">
-        Copyrights &copy;
+        Powerd by
+        <a href='https://hexo.io/'>Hexo</a>. Theme-
+        <a href="https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak">Tranquilpeak</a>
+       | Copyrights &copy;
         2018. Post with 💙 by
             Yoze.
+    </span>
+    <br/>
+    <span>
+
     </span>
 </footer>
             </div>
@@ -385,7 +425,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -393,7 +433,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/03/07/jenkins/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/03/07/jenkins/" title="分享到 Twitter">
                     <i class="fa fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -426,7 +466,7 @@
             
             
             <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xuyoze.github.io/2018/03/07/jenkins/">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/03/07/jenkins/">
                     <i class="fa fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                 </a>
             </li>
@@ -478,13 +518,13 @@
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-peofhqjkzcghmndknakluequy1y6owxdwpaqyju9ntl9zxnk7rdolb3rjjoj.min.js"></script>
+<script src="/assets/js/script-yhuo2grt8r7qkqumzgjoglkfbicl1thukjgmla6jopu56zpcowfedi5zjcor.min.js"></script>
 <!--SCRIPTS END-->
 
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'https://xuyoze.github.io/2018/03/07/jenkins/';
+                 this.page.url = 'http://xuyoze.github.io/2018/03/07/jenkins/';
                  
                     this.page.identifier = '2018/03/07/jenkins/';
                  
