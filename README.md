@@ -14,6 +14,6 @@ A fast, simple & powerful blog framework
 
 当前的blog使用了tranquilpeak作为主题, 你可以在这里查看具体内容 [tranquilpeak](https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak).
 
-### Yu Writer
+### Visual Studio Code
 
-MD编辑工具是用 [Yu Writer](https://ivarptr.github.io/yu-writer.site/)
+MD编辑工具是用 [VS Code](https://code.visualstudio.com/)
