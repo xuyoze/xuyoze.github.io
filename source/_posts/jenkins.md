@@ -52,7 +52,7 @@ github的插件应该是默认安装的, 如果没有请在插件管理中添加
 ```groovy
 #!groovy
 def deployToTomcat(localWarPath, warName) {
-    def server = "192.168.87.76"
+    def server = "192.168.0.76"
     def result = sh(
             script: "curl --upload-file ${localWarPath} 'http://${TOMCAT_ACCOUNT}@${server}/manager/text/deploy?update=true&path=/${warName}'",
             returnStdout: true
@@ -114,15 +114,120 @@ pipeline {
 }
 ```
 
-git
-### 3. Web项目的构建
+### 3. Tomcat Manager配置
 
-#### 3.1 Tomcat Manager配置
-#### 3.2 Jenkins中Tomcate Mannager凭据添加
+在Tomcat中开启Manager要经过来两个步骤处理.
+
+**1. 授权**
+
+修改Tomcat管理站点中的相关配置
+```shell
+# 转到manager站点所在目录
+cd /usr/local/tomcat/webapps/manager/META-INF
+vim context.xml
+```
+修改配置文件`content.xml`
+```xml
+<Context antiResourceLocking="false" privileged="true" >
+    <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
+    <Manager sessionAttributeValueClassNameFilter="java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap"/>
+</Context>
+```
+`Value`节点的`allow`属性中添加对应的Jenkins服务器IP地址.
+
+如果是测试环境,则可以直接注释掉 `Value` 和 `Manager` 两个节点.
+
+正式环境,可别这么干~~
+
+**2. 添加用户**
+
+修改tomcat的`tomcat-user.xml`
+```bash
+cd /usr/local/tomcat/conf/
+vim tomcat-users.xml
+```
+在最后添加相应的访问用户:
+```xml
+<role rolename="manager-gui"/>
+<role rolename="manager-script"/>
+<role rolename="admin-gui"/>
+<role rolename="admin-script"/>
+<role rolename="tomcat-gui"/>
+<user username="tomcat" password="tomcat" roles="manager-script,admin-script,admin-gui,tomcat,manager-gui"/>
+```
+指定用户名 username 以及密码 password
+
+已定义的角色可以查看tomcat官方文档,查看具体作用.
+
+**3. 在Jenkins中添加TomcatManager凭据**
+这里我在jenkens上添加名称为`tomcat-account-test-env`的manager访问凭据,上面的Jenkinsfiles用到该凭据.
 
 ### 4. 服务项目的构建
+
+如果web站点项目打包为War包的方式,则可以通过TomcatManager进行部署.
+
+如果是springboot项目并打包为jar包进行部署,接下来会描述相关设置
+
 #### 4.1 jar包发布
-#### 4.2 SSH配置
+对于jar包的发布,可以使用ssh拷贝的方式.
+
+如下定义了一个方法执行发布的各个步骤:
+```groovy
+def deployService(localJarPath, remotePath) {
+    sh "ssh 'root@localhost76' 'service demo-svc stop'"
+    sh "scp ${localJarPath} root@localhost76:${remotePath}"
+    sh "ssh 'root@localhost76' 'service demo-svc start'"
+    sh "ssh 'root@localhost76' 'service demo-svc status'"
+}
+```
+两台机器之间通过SSH互信方式进行通信,SSH的原理以及其他应用可参考 [SSH原理与运用](http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html)
+
 #### 4.3 服务编写
+在Centos7.+ 版本中,可以通过编写shell脚本的方式将jar包做成服务.
 
+以`demo-svc.jar`部署为例,编写相应的shell脚本
 
+1. 启动脚本`demo-svc-start`
+```bash
+#!/bin/sh
+export JAVA_HOME=/opt/java
+export PATH=$JAVA_HOME/bin:$PATH # 指定JDK的目录
+java -jar /var/services/demo-svc/demo-svc.jar > /var/services/demo-svc/logs/demo-svc.log &
+echo $! > /var/run/demo-svc.pid
+```
+2. 停止脚本`demo-svc-stop`
+```bash
+#!/bin/sh
+PID=$(cat /var/run/demo-svc.pid)
+kill -9 $PID
+```
+3. 创建服务`robot-svc.service`
+```bash
+###CentOS 7.x ##
+[Unit]
+Description=service for demo
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+ExecStart=/var/services/demo-svc/demo-svc-start
+ExecStop= /var/services/demo-svc/demo-svc-stop
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+4. 部署服务
+
+将`robot-svc.service`拷贝到`/usr/lib/systemd/system`
+
+执行命令启动服务,添加服务到开机启动
+```bash
+systemctl enable robot-svc #开机自启动
+systemctl start robot-svc #启动
+systemctl stop robot-svc #停止
+```
+
+(完)
