@@ -85,6 +85,6 @@ theme: tranquilpeak
 deploy:
   type: git
   branch: master
-  name: xuyoze
+  name: yoze
   email: xuyoze@gmail.com
   repo: https://github.com/xuyoze/xuyoze.github.io.git
