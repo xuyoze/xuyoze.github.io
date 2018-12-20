@@ -1,0 +1,479 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="程序员的博客">
+    <title>Python3.7下安装scrapy报错解决犯法 - 程序员的博客</title>
+    <meta name="author" content="Yoze">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png"},"articleBody":"\n升级python 到3.7后, 安装scrapy 遇到报错情况, 网上查询看到如下文章 转载记录\n\n\n在python3.6以上版本安装scrapy框架是会报错缺少Microsoft Visual C++ Build Toolspip install scrapy\n然后安装会出现下面错误\n2.去www.lfd.uci.edu 下载twisted对应版本的whl文件，这里对应版本是只对应你安装的python的版本，寻找你所需要的版本下载下来\n3.pip install 你下载的whl文件\n4.最后pip install scrapy即可\n\n作者：liuzemeeting来源：CSDN原文：https://blog.csdn.net/liuzemeeting/article/details/79363981版权声明：本文为博主原创文章，转载请附上博文链接！\n\n","dateCreated":"2018-12-20T11:05:40+08:00","dateModified":"2018-12-20T11:26:44+08:00","datePublished":"2018-12-20T11:05:40+08:00","description":"\n升级python 到3.7后, 安装scrapy 遇到报错情况, 网上查询看到如下文章 转载记录\n\n\n在python3.6以上版本安装scrapy框架是会报错缺少Microsoft Visual C++ Build Toolspip install scrapy\n然后安装会出现下面错误","headline":"Python3.7下安装scrapy报错解决犯法","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://xuyoze.github.io/2018/12/20/scrapy-install-error/"},"publisher":{"@type":"Organization","name":"Yoze","sameAs":["https://github.com/xuyoze"],"image":"avator.png","logo":{"@type":"ImageObject","url":"avator.png"}},"url":"http://xuyoze.github.io/2018/12/20/scrapy-install-error/","keywords":"scrapy, python"}</script>
+    <meta name="description" content="升级python 到3.7后, 安装scrapy 遇到报错情况, 网上查询看到如下文章 转载记录   在python3.6以上版本安装scrapy框架是会报错缺少Microsoft Visual C++ Build Toolspip install scrapy 然后安装会出现下面错误">
+<meta name="keywords" content="scrapy,python">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Python3.7下安装scrapy报错解决犯法">
+<meta property="og:url" content="http://xuyoze.github.io/2018/12/20/scrapy-install-error/index.html">
+<meta property="og:site_name" content="程序员的博客">
+<meta property="og:description" content="升级python 到3.7后, 安装scrapy 遇到报错情况, 网上查询看到如下文章 转载记录   在python3.6以上版本安装scrapy框架是会报错缺少Microsoft Visual C++ Build Toolspip install scrapy 然后安装会出现下面错误">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="http://xuyoze.github.io/2018/12/20/scrapy-install-error/20180224171825166.png">
+<meta property="og:image" content="http://xuyoze.github.io/2018/12/20/scrapy-install-error/2018022417260832.png">
+<meta property="og:image" content="http://xuyoze.github.io/2018/12/20/scrapy-install-error/20180224172808115.png">
+<meta property="og:updated_time" content="2018-12-20T03:26:44.397Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python3.7下安装scrapy报错解决犯法">
+<meta name="twitter:description" content="升级python 到3.7后, 安装scrapy 遇到报错情况, 网上查询看到如下文章 转载记录   在python3.6以上版本安装scrapy框架是会报错缺少Microsoft Visual C++ Build Toolspip install scrapy 然后安装会出现下面错误">
+<meta name="twitter:image" content="http://xuyoze.github.io/2018/12/20/scrapy-install-error/20180224171825166.png">
+<meta name="twitter:creator" content="@yoze">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://xuyoze.github.io/assets/images/avator.png"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111753291-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-111753291-1');
+    </script>
+
+
+    
+    <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d484c06aa1636ad18eeb208942d6f840";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">程序员的博客</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/avator.png" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/avator.png" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Yoze</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>[抖腿患者] [轻度强迫症] [道德败坏] [深井冰] [擅撸码] [喜看剧] [房奴]</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/xuyoze" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Python3.7下安装scrapy报错解决犯法
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2018-12-20T11:05:40+08:00">
+	
+		    12月 20, 2018
+    	
+    </time>
+    
+        <span>发布在 </span>
+        
+    <a class="category-link" href="/categories/reprint/">转载</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <blockquote>
+<p>升级python 到3.7后, 安装scrapy 遇到报错情况, 网上查询看到如下文章 转载记录</p>
+</blockquote>
+<hr>
+<p>在python3.6以上版本安装scrapy框架是会报错缺少Microsoft Visual C++ Build Tools<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip install scrapy</span><br></pre></td></tr></table></figure></p>
+<p>然后安装会出现下面错误<br><img src="/2018/12/20/scrapy-install-error/20180224171825166.png" title="error"><br><a id="more"></a></p>
+<p>2.去<a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#twisted" target="_blank" rel="noopener">www.lfd.uci.edu</a> 下载twisted对应版本的<code>whl</code>文件，这里对应版本是只对应你安装的python的版本，寻找你所需要的版本下载下来</p>
+<p>3.<code>pip install</code> 你下载的whl文件<br><img src="/2018/12/20/scrapy-install-error/2018022417260832.png" title="install"></p>
+<p>4.最后<code>pip install scrapy</code>即可<br><img src="/2018/12/20/scrapy-install-error/20180224172808115.png" title="install"></p>
+<blockquote>
+<p>作者：liuzemeeting<br>来源：CSDN<br>原文：<a href="https://blog.csdn.net/liuzemeeting/article/details/79363981" target="_blank" rel="noopener">https://blog.csdn.net/liuzemeeting/article/details/79363981</a><br>版权声明：本文为博主原创文章，转载请附上博文链接！</p>
+</blockquote>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/python/">python</a> <a class="tag tag--primary tag--small t-link" href="/tags/scrapy/">scrapy</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/03/07/jenkins/" data-tooltip="Jenkins自动构建发布SpringBoot项目" aria-label="下一篇: Jenkins自动构建发布SpringBoot项目">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/12/20/scrapy-install-error/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Powerd by
+        <a href="https://hexo.io/">Hexo</a>. Theme-
+        <a href="https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak">Tranquilpeak</a>
+       | Copyrights &copy;
+        2018. Post with 💙 by
+            Yoze.
+    </span>
+    <br>
+    <span>
+
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/03/07/jenkins/" data-tooltip="Jenkins自动构建发布SpringBoot项目" aria-label="下一篇: Jenkins自动构建发布SpringBoot项目">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/12/20/scrapy-install-error/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://xuyoze.github.io/2018/12/20/scrapy-install-error/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/avator.png" alt="作者的图片">
+        
+            <h4 id="about-card-name">Yoze</h4>
+        
+            <div id="about-card-bio"><p>[抖腿患者] [轻度强迫症] [道德败坏] [深井冰] [擅撸码] [喜看剧] [房奴]</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>哒哒哒</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                Mars
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://xuyoze.github.io/2018/12/20/scrapy-install-error/';
+                 
+                    this.page.identifier = '2018/12/20/scrapy-install-error/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'yoze';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+
+    </body>
+</html>
